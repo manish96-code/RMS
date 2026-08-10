@@ -2,8 +2,10 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\HomeController;
+use App\Http\Controllers\Api\StudentController;
 
 Route::get('/', [HomeController::class, 'index']);
+Route::post('/create-student', [StudentController::class, 'createStudent']);
 
 // Respond to preflight requests for any path under /api
 Route::options('{any}', function () {
