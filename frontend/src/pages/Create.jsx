@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { API_BASE_URL } from '../../config'
 
 const Create = () => {
   const [formData, setFormData] = useState({
@@ -26,24 +27,30 @@ const Create = () => {
     setStatus({ type: '', message: '' })
 
     try {
-      const response = await fetch('http://localhost:8001/api/students', {
+      const payload = {
+        name: formData.name,
+        email: formData.email,
+        contact: formData.contact,
+      }
+
+      const response = await fetch(`${API_BASE_URL}/api/students`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(payload)
       })
 
+      const data = await response.json().catch(() => ({}))
+
       if (response.ok) {
-        setStatus({ type: 'success', message: 'Student registered successfully!' })
+        setStatus({ type: 'success', message: data.message || 'Student registered successfully!' })
         setFormData({ name: '', email: '', contact: '', course: '', gender: '' })
       } else {
-        setStatus({ type: 'success', message: 'Student information saved successfully!' })
-        setFormData({ name: '', email: '', contact: '', course: '', gender: '' })
+        setStatus({ type: 'error', message: data.message || 'Failed to save student.' })
       }
-    } catch {
-      setStatus({ type: 'success', message: 'Student information saved successfully!' })
-      setFormData({ name: '', email: '', contact: '', course: '', gender: '' })
+    } catch (error) {
+      setStatus({ type: 'error', message: 'Unable to connect to the server.' })
     } finally {
       setIsSubmitting(false)
     }

@@ -14,13 +14,24 @@ class StudentController extends Controller
         $validatedData = $request->validate([
             'name' => 'required|string|max:30',
             'email' => 'required|email|max:50|unique:users,email',
-            'phone' => 'required|string|max:15',
+            'phone' => 'nullable|string|max:15',
+            'contact' => 'nullable|string|max:15',
         ]);
+
+        $phone = $validatedData['phone'] ?? $validatedData['contact'] ?? null;
+
+        if (empty($phone)) {
+            return response()->json([
+                'message' => 'Phone/contact is required',
+            ], 422)->header('Access-Control-Allow-Origin', '*')
+                ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE')
+                ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+        }
 
         $student = User::create([
             'name' => $validatedData['name'],
             'email' => $validatedData['email'],
-            'phone' => $validatedData['phone'],
+            'phone' => $phone,
             'password' => Hash::make('password123'),
         ]);
 
