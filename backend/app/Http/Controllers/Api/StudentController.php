@@ -43,8 +43,21 @@ class StudentController extends Controller
             ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     }
 
+    public function index()
+    {
+        $students = User::latest()->get();
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $students,
+        ], 200)->header('Access-Control-Allow-Origin', '*')
+            ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE')
+            ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    }
+
     public function saveStudent(Request $request)
     {
         return $this->createStudent($request);
     }
 }
+
