@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\HomeController;
 use App\Http\Controllers\Api\StudentController;
 
 Route::get('/', [HomeController::class, 'index']);
+Route::get('/stdcall', [StudentController::class, 'index'])->name('stdcall');
 Route::get('/students', [StudentController::class, 'index']);
 Route::post('/create-student', [StudentController::class, 'createStudent']);
 Route::post('/students', [StudentController::class, 'createStudent']);
