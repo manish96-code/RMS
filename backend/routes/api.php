@@ -9,6 +9,9 @@ Route::get('/stdcall', [StudentController::class, 'index'])->name('stdcall');
 Route::get('/students', [StudentController::class, 'index']);
 Route::post('/create-student', [StudentController::class, 'createStudent']);
 Route::post('/students', [StudentController::class, 'createStudent']);
+Route::delete('/students/{id}', [StudentController::class, 'deleteStudent']);
+Route::delete('/delete-student/{id}', [StudentController::class, 'deleteStudent']);
+
 
 
 // Respond to preflight requests for any path under /api

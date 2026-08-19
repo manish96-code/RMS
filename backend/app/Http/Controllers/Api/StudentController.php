@@ -60,4 +60,34 @@ class StudentController extends Controller
     {
         return $this->createStudent($request);
     }
+
+    public function deleteStudent($id)
+    {
+        $student = User::find($id);
+
+        if (!$student) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Student not found',
+            ], 404)->header('Access-Control-Allow-Origin', '*')
+                ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE')
+                ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+        }
+
+        $student->delete();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Student deleted successfully',
+            'id' => $id,
+        ], 200)->header('Access-Control-Allow-Origin', '*')
+            ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE')
+            ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    }
+
+    public function destroy($id)
+    {
+        return $this->deleteStudent($id);
+    }
 }
+

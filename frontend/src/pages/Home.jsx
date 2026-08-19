@@ -26,6 +26,34 @@ const Home = () => {
       })
   }, [])
 
+  const handleDelete = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this student record?')) {
+      return
+    }
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/students/${id}`, {
+        method: 'DELETE',
+      })
+      if (response.ok) {
+        setData((prev) => {
+          if (!prev) return prev
+          const list = Array.isArray(prev)
+            ? prev
+            : prev.students || prev.data || []
+          const updated = list.filter((s) => s.id !== id)
+          return Array.isArray(prev)
+            ? updated
+            : { ...prev, students: updated, data: updated }
+        })
+      } else {
+        alert('Failed to delete student.')
+      }
+    } catch {
+      alert('Unable to connect to server.')
+    }
+  }
+
   const studentList = data?.students || data?.data || (Array.isArray(data) ? data : [])
 
   return (
@@ -76,7 +104,8 @@ const Home = () => {
                 <th className="px-4 py-3">Contact</th>
                 <th className="px-4 py-3">Course</th>
                 <th className="px-4 py-3">Gender</th>
-                <th className="px-4 py-3 text-right">Created At</th>
+                <th className="px-4 py-3">Created At</th>
+                <th className="px-4 py-3 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -89,16 +118,24 @@ const Home = () => {
                     <td className="px-4 py-3.5 text-slate-600">{student.phone || student.contact || '-'}</td>
                     <td className="px-4 py-3.5 text-slate-600">{student.course || '-'}</td>
                     <td className="px-4 py-3.5 text-slate-600 capitalize">{student.gender || '-'}</td>
-                    <td className="px-4 py-3.5 text-right text-xs text-slate-400">
+                    <td className="px-4 py-3.5 text-xs text-slate-400">
                       {student.created_at
                         ? new Date(student.created_at).toLocaleDateString()
                         : '-'}
+                    </td>
+                    <td className="px-4 py-3.5 text-right">
+                      <button
+                        onClick={() => handleDelete(student.id)}
+                        className="px-3 py-1.5 bg-rose-50 text-rose-600 hover:bg-rose-100 rounded-md text-xs font-medium transition cursor-pointer"
+                      >
+                        Delete
+                      </button>
                     </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="7" className="px-4 py-8 text-center text-slate-400 text-sm">
+                  <td colSpan="8" className="px-4 py-8 text-center text-slate-400 text-sm">
                     No student records found.
                   </td>
                 </tr>
