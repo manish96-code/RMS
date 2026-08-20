@@ -9,8 +9,8 @@ use Illuminate\Support\Facades\Hash;
 
 class StudentController extends Controller
 {
-
-    public function index(){
+    public function index()
+    {
         $students = User::all();
         return response()->json([
             'message' => 'Students list',
@@ -160,4 +160,3 @@ class StudentController extends Controller
         return $this->deleteStudent($id);
     }
 }
-
