@@ -61,6 +61,76 @@ class StudentController extends Controller
         return $this->createStudent($request);
     }
 
+    public function showStudent($id)
+    {
+        $student = User::find($id);
+
+        if (!$student) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Student not found',
+            ], 404)->header('Access-Control-Allow-Origin', '*')
+                ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE')
+                ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $student,
+            'student' => $student,
+        ], 200)->header('Access-Control-Allow-Origin', '*')
+            ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE')
+            ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    }
+
+    public function show($id)
+    {
+        return $this->showStudent($id);
+    }
+
+    public function updateStudent(Request $request, $id)
+    {
+        $student = User::find($id);
+
+        if (!$student) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Student not found',
+            ], 404)->header('Access-Control-Allow-Origin', '*')
+                ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE')
+                ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+        }
+
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:30',
+            'email' => 'required|email|max:50|unique:users,email,' . $id,
+            'phone' => 'nullable|string|max:15',
+            'contact' => 'nullable|string|max:15',
+        ]);
+
+        $phone = $validatedData['phone'] ?? $validatedData['contact'] ?? $student->phone;
+
+        $student->update([
+            'name' => $validatedData['name'],
+            'email' => $validatedData['email'],
+            'phone' => $phone,
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Student updated successfully',
+            'data' => $student,
+            'student' => $student,
+        ], 200)->header('Access-Control-Allow-Origin', '*')
+            ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE')
+            ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    }
+
+    public function update(Request $request, $id)
+    {
+        return $this->updateStudent($request, $id);
+    }
+
     public function deleteStudent($id)
     {
         $student = User::find($id);

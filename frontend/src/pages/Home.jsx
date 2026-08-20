@@ -123,7 +123,13 @@ const Home = () => {
                         ? new Date(student.created_at).toLocaleDateString()
                         : '-'}
                     </td>
-                    <td className="px-4 py-3.5 text-right">
+                    <td className="px-4 py-3.5 text-right flex items-center justify-end gap-2">
+                      <Link
+                        to={`/edit/${student.id}`}
+                        className="px-3 py-1.5 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-md text-xs font-medium transition"
+                      >
+                        Edit
+                      </Link>
                       <button
                         onClick={() => handleDelete(student.id)}
                         className="px-3 py-1.5 bg-rose-50 text-rose-600 hover:bg-rose-100 rounded-md text-xs font-medium transition cursor-pointer"

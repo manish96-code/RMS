@@ -9,6 +9,11 @@ Route::get('/stdcall', [StudentController::class, 'index'])->name('stdcall');
 Route::get('/students', [StudentController::class, 'index']);
 Route::post('/create-student', [StudentController::class, 'createStudent']);
 Route::post('/students', [StudentController::class, 'createStudent']);
+Route::get('/students/{id}', [StudentController::class, 'showStudent']);
+Route::put('/students/{id}', [StudentController::class, 'updateStudent']);
+Route::post('/students/{id}', [StudentController::class, 'updateStudent']);
+Route::put('/update-student/{id}', [StudentController::class, 'updateStudent']);
+Route::post('/update-student/{id}', [StudentController::class, 'updateStudent']);
 Route::delete('/students/{id}', [StudentController::class, 'deleteStudent']);
 Route::delete('/delete-student/{id}', [StudentController::class, 'deleteStudent']);
 
