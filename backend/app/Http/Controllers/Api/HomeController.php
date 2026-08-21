@@ -3,12 +3,21 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Dish;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
     public function index()
     {
+        // Fetch dishes from DB, or seed initial dishes if empty
+        $dbDishes = Dish::latest()->get();
+
+        if ($dbDishes->isEmpty()) {
+            app(DishController::class)->index();
+            $dbDishes = Dish::latest()->get();
+        }
+
         $restaurantInfo = [
             'name' => "Gourmet Haven Restaurant & Lounge",
             'tagline' => 'Fresh Flavors, Memorable Dining',
@@ -25,77 +34,15 @@ class HomeController extends Controller
             'occupied_tables' => 9,
             'total_tables' => 15,
             'pending_kitchen' => 4,
+            'active_dishes_count' => $dbDishes->count(),
         ];
 
         $categories = [
-            ['id' => 1, 'name' => 'Starters', 'count' => 14, 'icon' => '🥗', 'image' => 'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=400'],
-            ['id' => 2, 'name' => 'Main Course', 'count' => 22, 'icon' => '🍲', 'image' => 'https://images.unsplash.com/photo-1544025162-d76694265947?w=400'],
-            ['id' => 3, 'name' => 'Pizzas & Burgers', 'count' => 18, 'icon' => '🍕', 'image' => 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400'],
-            ['id' => 4, 'name' => 'Desserts', 'count' => 10, 'icon' => '🍰', 'image' => 'https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=400'],
-            ['id' => 5, 'name' => 'Beverages', 'count' => 15, 'icon' => '🍹', 'image' => 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=400'],
-        ];
-
-        $featuredDishes = [
-            [
-                'id' => 101,
-                'name' => 'Truffle Mushroom Pizza',
-                'category' => 'Pizzas & Burgers',
-                'price' => 480,
-                'rating' => 4.9,
-                'prep_time' => '18 mins',
-                'description' => 'Wood-fired sourdough pizza with wild mushrooms, truffle oil, and fresh mozzarella.',
-                'image' => 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=500',
-                'is_chef_special' => true,
-                'in_stock' => true
-            ],
-            [
-                'id' => 102,
-                'name' => 'Grilled Butter Chicken Sizzler',
-                'category' => 'Main Course',
-                'price' => 520,
-                'rating' => 4.8,
-                'prep_time' => '22 mins',
-                'description' => 'Tender chicken marinated in aromatic spices served on a sizzling hot platter.',
-                'image' => 'https://images.unsplash.com/photo-1588166524941-3bf61a9c41db?w=500',
-                'is_chef_special' => true,
-                'in_stock' => true
-            ],
-            [
-                'id' => 103,
-                'name' => 'Artisanal Avocado Caesar Salad',
-                'category' => 'Starters',
-                'price' => 340,
-                'rating' => 4.7,
-                'prep_time' => '12 mins',
-                'description' => 'Crisp romaine lettuce, Hass avocado slice, garlic croutons, and creamy Caesar dressing.',
-                'image' => 'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=500',
-                'is_chef_special' => false,
-                'in_stock' => true
-            ],
-            [
-                'id' => 104,
-                'name' => 'Belgian Dark Chocolate Lava Cake',
-                'category' => 'Desserts',
-                'price' => 290,
-                'rating' => 4.95,
-                'prep_time' => '15 mins',
-                'description' => 'Warm molten chocolate cake served with Madagascar vanilla bean ice cream.',
-                'image' => 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=500',
-                'is_chef_special' => true,
-                'in_stock' => true
-            ],
-            [
-                'id' => 105,
-                'name' => 'Sparkling Blueberry Mint Mocktail',
-                'category' => 'Beverages',
-                'price' => 220,
-                'rating' => 4.6,
-                'prep_time' => '8 mins',
-                'description' => 'Fresh muddled blueberries, wild mint leaves, lime juice, and sparkling soda.',
-                'image' => 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=500',
-                'is_chef_special' => false,
-                'in_stock' => true
-            ]
+            ['id' => 1, 'name' => 'Starters', 'count' => $dbDishes->where('category', 'Starters')->count(), 'icon' => '🥗', 'image' => 'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=400'],
+            ['id' => 2, 'name' => 'Main Course', 'count' => $dbDishes->where('category', 'Main Course')->count(), 'icon' => '🍲', 'image' => 'https://images.unsplash.com/photo-1544025162-d76694265947?w=400'],
+            ['id' => 3, 'name' => 'Pizzas & Burgers', 'count' => $dbDishes->where('category', 'Pizzas & Burgers')->count(), 'icon' => '🍕', 'image' => 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400'],
+            ['id' => 4, 'name' => 'Desserts', 'count' => $dbDishes->where('category', 'Desserts')->count(), 'icon' => '🍰', 'image' => 'https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=400'],
+            ['id' => 5, 'name' => 'Beverages', 'count' => $dbDishes->where('category', 'Beverages')->count(), 'icon' => '🍹', 'image' => 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=400'],
         ];
 
         $tablesOverview = [
@@ -122,7 +69,7 @@ class HomeController extends Controller
             'restaurant' => $restaurantInfo,
             'stats' => $stats,
             'categories' => $categories,
-            'featured_dishes' => $featuredDishes,
+            'featured_dishes' => $dbDishes,
             'tables' => $tablesOverview,
             'recent_orders' => $recentOrders,
         ], 200)->header('Access-Control-Allow-Origin', '*')

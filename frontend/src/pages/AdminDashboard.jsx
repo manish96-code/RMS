@@ -70,11 +70,60 @@ const AdminDashboard = () => {
     setTimeout(() => setToastNotice(''), 3000)
   }
 
-  const handleCreateDishSubmit = (e) => {
+  const [isSubmittingDish, setIsSubmittingDish] = useState(false)
+  const [dishesList, setDishesList] = useState([])
+
+  const fetchDishes = () => {
+    fetch(`${API_BASE_URL}/api/dishes`)
+      .then((res) => res.json())
+      .then((resData) => {
+        if (resData.dishes) {
+          setDishesList(resData.dishes)
+        }
+      })
+      .catch((err) => console.error('Error loading dishes:', err))
+  }
+
+  useEffect(() => {
+    fetchDishes()
+  }, [])
+
+  const handleCreateDishSubmit = async (e) => {
     e.preventDefault()
-    setShowAddDishModal(false)
-    showToast(`New Dish "${newDish.name}" added to menu! 🍕`)
-    setNewDish({ name: '', category: 'Main Course', price: '', prep_time: '15 mins' })
+    setIsSubmittingDish(true)
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/admin/dishes`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: newDish.name,
+          category: newDish.category,
+          price: parseFloat(newDish.price),
+          prep_time: newDish.prep_time || '15 mins',
+          description: newDish.description || 'Delicious fresh preparation by our top chef.',
+          is_chef_special: newDish.is_chef_special || false,
+        }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        showToast(data.message || `New Dish "${newDish.name}" added to menu successfully! 🍕`)
+        setShowAddDishModal(false)
+        setNewDish({ name: '', category: 'Main Course', price: '', prep_time: '15 mins', description: '', is_chef_special: false })
+        fetchDishes()
+        fetchAdminData()
+      } else {
+        alert(data.message || 'Failed to add dish.')
+      }
+    } catch (err) {
+      alert('Unable to connect to server to add dish.')
+    } finally {
+      setIsSubmittingDish(false)
+    }
   }
 
   return (
@@ -156,9 +205,10 @@ const AdminDashboard = () => {
               <div className="flex gap-3 pt-3 border-t border-slate-100">
                 <button
                   type="submit"
-                  className="flex-1 py-3 bg-gradient-to-r from-orange-500 to-amber-500 text-white text-xs font-bold rounded-xl shadow-md transition cursor-pointer"
+                  disabled={isSubmittingDish}
+                  className="flex-1 py-3 bg-gradient-to-r from-orange-500 to-amber-500 text-white text-xs font-bold rounded-xl shadow-md transition disabled:opacity-60 cursor-pointer"
                 >
-                  Publish Dish
+                  {isSubmittingDish ? 'Publishing Dish...' : 'Publish Dish'}
                 </button>
                 <button
                   type="button"

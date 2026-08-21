@@ -4,11 +4,22 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\HomeController;
 use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\AdminController;
+use App\Http\Controllers\Api\DishController;
 
 Route::get('/', [HomeController::class, 'index']);
 Route::get('/home', [HomeController::class, 'index']);
 Route::get('/restaurant-home', [HomeController::class, 'index']);
 Route::get('/admin/dashboard', [AdminController::class, 'dashboard']);
+
+// Dish Management APIs for Admin & App
+Route::get('/dishes', [DishController::class, 'index']);
+Route::post('/dishes', [DishController::class, 'store']);
+Route::post('/admin/dishes', [DishController::class, 'store']);
+Route::post('/create-dish', [DishController::class, 'store']);
+Route::get('/dishes/{id}', [DishController::class, 'show']);
+Route::put('/dishes/{id}', [DishController::class, 'update']);
+Route::delete('/dishes/{id}', [DishController::class, 'destroy']);
+
 Route::get('/stdcall', [StudentController::class, 'index'])->name('stdcall');
 Route::get('/students', [StudentController::class, 'index']);
 Route::post('/create-student', [StudentController::class, 'createStudent']);
