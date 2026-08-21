@@ -8,6 +8,7 @@ import Edit from './pages/Edit'
 import AdminDashboard from './pages/admin/AdminDashboard'
 import AddProduct from './pages/admin/AddProduct'
 import ManageProducts from './pages/admin/ManageProducts'
+import EditProduct from './pages/admin/EditProduct'
 import Transactions from './pages/admin/Transactions'
 import StaffRoster from './pages/admin/StaffRoster'
 
@@ -113,6 +114,7 @@ const App = () => {
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/add-product" element={<AddProduct />} />
           <Route path="/admin/products" element={<ManageProducts />} />
+          <Route path="/admin/edit-product/:id" element={<EditProduct />} />
           <Route path="/admin/transactions" element={<Transactions />} />
           <Route path="/admin/staff" element={<StaffRoster />} />
           <Route path="/create" element={<Create />} />
