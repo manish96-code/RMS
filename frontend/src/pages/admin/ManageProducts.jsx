@@ -11,9 +11,6 @@ const ManageProducts = () => {
   const [categoryFilter, setCategoryFilter] = useState('All')
   const [toastMessage, setToastMessage] = useState('')
 
-  // View Product Modal State
-  const [viewingDish, setViewingDish] = useState(null)
-
   const fetchDishes = () => {
     setLoading(true)
     setError('')
@@ -81,80 +78,6 @@ const ManageProducts = () => {
         <div className="fixed top-5 right-5 z-50 bg-slate-900 text-white text-xs font-medium px-4 py-2.5 rounded-lg shadow-md flex items-center gap-2 border border-slate-800">
           <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
           <span>{toastMessage}</span>
-        </div>
-      )}
-
-      {/* View Product Details Modal */}
-      {viewingDish && (
-        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl max-w-md w-full border border-slate-200 shadow-lg overflow-hidden animate-scale-in text-left">
-            
-            {/* Dish Image */}
-            <div className="relative h-48 bg-slate-100 overflow-hidden">
-              <img
-                src={viewingDish.image || 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=500'}
-                alt={viewingDish.name}
-                className="w-full h-full object-cover"
-              />
-              <button
-                onClick={() => setViewingDish(null)}
-                className="absolute top-3 right-3 w-8 h-8 rounded-full bg-slate-900/70 text-white font-bold text-xs flex items-center justify-center hover:bg-slate-900 transition"
-              >
-                ✕
-              </button>
-              <div className="absolute bottom-3 left-3 bg-slate-900/80 text-white text-[10px] font-semibold px-2 py-0.5 rounded backdrop-blur-xs">
-                {viewingDish.category}
-              </div>
-            </div>
-
-            {/* Content */}
-            <div className="p-5 space-y-4 text-xs">
-              <div className="flex items-start justify-between gap-2">
-                <div>
-                  <h3 className="text-base font-bold text-slate-900">{viewingDish.name}</h3>
-                  <p className="text-slate-400 font-mono text-[10px]">ID: #{viewingDish.id}</p>
-                </div>
-                <div className="text-right">
-                  <span className="text-lg font-bold text-slate-900">₹{viewingDish.price}</span>
-                  <span className="block text-[10px] text-amber-600 font-semibold">★ {viewingDish.rating || 4.8}</span>
-                </div>
-              </div>
-
-              <div className="space-y-1 bg-slate-50 p-3 rounded-lg border border-slate-100 text-slate-600">
-                <div className="font-semibold text-slate-800 text-[11px] mb-0.5">Description</div>
-                <p className="leading-relaxed">{viewingDish.description || 'Delicious fresh preparation by our top chef.'}</p>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3 text-slate-600">
-                <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-100">
-                  <span className="text-[10px] text-slate-400 uppercase font-semibold block">Prep Time</span>
-                  <span className="font-semibold text-slate-800">{viewingDish.prep_time || '15 mins'}</span>
-                </div>
-
-                <div className="bg-slate-50 p-2.5 rounded-lg border border-slate-100">
-                  <span className="text-[10px] text-slate-400 uppercase font-semibold block">Stock Availability</span>
-                  <span className="font-semibold text-emerald-600">In Stock</span>
-                </div>
-              </div>
-
-              {/* Actions */}
-              <div className="flex items-center gap-2 pt-3 border-t border-slate-100">
-                <Link
-                  to={`/admin/edit-product/${viewingDish.id}`}
-                  className="flex-1 py-2 text-center bg-slate-900 text-white font-semibold rounded-lg hover:bg-slate-800 transition"
-                >
-                  Edit Product Details
-                </Link>
-                <button
-                  onClick={() => setViewingDish(null)}
-                  className="px-4 py-2 bg-slate-100 text-slate-600 font-semibold rounded-lg hover:bg-slate-200 transition"
-                >
-                  Close
-                </button>
-              </div>
-            </div>
-
-          </div>
         </div>
       )}
 
@@ -249,12 +172,12 @@ const ManageProducts = () => {
                         <td className="px-4 py-3.5 text-slate-500">{dish.prep_time || '15 mins'}</td>
                         <td className="px-4 py-3.5 text-amber-600 font-semibold">★ {dish.rating || 4.8}</td>
                         <td className="px-4 py-3.5 text-right flex items-center justify-end gap-1.5">
-                          <button
-                            onClick={() => setViewingDish(dish)}
-                            className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded text-xs font-semibold transition cursor-pointer"
+                          <Link
+                            to={`/admin/view-product/${dish.id}`}
+                            className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded text-xs font-semibold transition"
                           >
                             👁️ View
-                          </button>
+                          </Link>
 
                           <Link
                             to={`/admin/edit-product/${dish.id}`}
