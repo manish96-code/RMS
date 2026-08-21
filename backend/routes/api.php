@@ -3,10 +3,12 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\HomeController;
 use App\Http\Controllers\Api\StudentController;
+use App\Http\Controllers\Api\AdminController;
 
 Route::get('/', [HomeController::class, 'index']);
 Route::get('/home', [HomeController::class, 'index']);
 Route::get('/restaurant-home', [HomeController::class, 'index']);
+Route::get('/admin/dashboard', [AdminController::class, 'dashboard']);
 Route::get('/stdcall', [StudentController::class, 'index'])->name('stdcall');
 Route::get('/students', [StudentController::class, 'index']);
 Route::post('/create-student', [StudentController::class, 'createStudent']);

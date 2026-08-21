@@ -3,6 +3,7 @@ import { Routes, Route, Link, useLocation } from 'react-router-dom'
 import Home from './pages/Home'
 import Create from './pages/Create'
 import Edit from './pages/Edit'
+import AdminDashboard from './pages/AdminDashboard'
 
 const App = () => {
   const location = useLocation()
@@ -48,7 +49,18 @@ const App = () => {
                     : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
                 }`}
               >
-                <span>📊</span> Restaurant Dashboard
+                <span>📊</span> Restaurant POS
+              </Link>
+
+              <Link
+                to="/admin"
+                className={`px-4 py-1.5 rounded-lg text-xs font-bold transition flex items-center gap-2 ${
+                  location.pathname === '/admin'
+                    ? 'bg-slate-900 text-white shadow-sm'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
+                }`}
+              >
+                <span>👑</span> Admin Panel
               </Link>
 
               <Link
@@ -77,10 +89,12 @@ const App = () => {
 
             <div className="h-8 w-px bg-slate-200 hidden sm:block"></div>
 
-            <div className="flex items-center gap-2 px-3 py-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full text-xs font-semibold">
-              <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
-              <span>Kitchen Live</span>
-            </div>
+            <Link
+              to="/admin"
+              className="px-3.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center gap-1.5"
+            >
+              <span>⚙️</span> Admin Dashboard
+            </Link>
           </div>
 
         </div>
@@ -90,6 +104,7 @@ const App = () => {
       <main className="flex-1">
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/create" element={<Create />} />
           <Route path="/edit/:id" element={<Edit />} />
         </Routes>
