@@ -3,17 +3,18 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Staff;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class StaffController extends Controller
 {
     /**
-     * Seed initial sample staff members if database is empty
+     * Seed initial sample staff users if database has no staff members
      */
     private function seedInitialStaffIfEmpty()
     {
-        if (Staff::count() === 0) {
+        if (User::whereNotNull('role')->count() === 0) {
             $sampleStaff = [
                 [
                     'name' => 'Rahul Sharma',
@@ -22,7 +23,8 @@ class StaffController extends Controller
                     'role' => 'Head Chef',
                     'shift' => 'Morning',
                     'status' => 'On Duty',
-                    'orders_handled' => 24
+                    'orders_handled' => 24,
+                    'password' => Hash::make('password123'),
                 ],
                 [
                     'name' => 'Priya Patel',
@@ -31,7 +33,8 @@ class StaffController extends Controller
                     'role' => 'Senior Waiter',
                     'shift' => 'Morning',
                     'status' => 'On Duty',
-                    'orders_handled' => 18
+                    'orders_handled' => 18,
+                    'password' => Hash::make('password123'),
                 ],
                 [
                     'name' => 'Amit Kumar',
@@ -40,7 +43,8 @@ class StaffController extends Controller
                     'role' => 'Cashier',
                     'shift' => 'Evening',
                     'status' => 'On Duty',
-                    'orders_handled' => 38
+                    'orders_handled' => 38,
+                    'password' => Hash::make('password123'),
                 ],
                 [
                     'name' => 'Neha Singh',
@@ -49,12 +53,13 @@ class StaffController extends Controller
                     'role' => 'Floor Supervisor',
                     'shift' => 'Night',
                     'status' => 'Off Duty',
-                    'orders_handled' => 0
+                    'orders_handled' => 0,
+                    'password' => Hash::make('password123'),
                 ]
             ];
 
             foreach ($sampleStaff as $staffData) {
-                Staff::create($staffData);
+                User::create($staffData);
             }
         }
     }
@@ -66,11 +71,11 @@ class StaffController extends Controller
     {
         $this->seedInitialStaffIfEmpty();
 
-        $staffList = Staff::orderBy('id', 'asc')->get();
+        $staffList = User::whereNotNull('role')->orderBy('id', 'asc')->get();
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Staff members fetched successfully',
+            'message' => 'Staff members fetched successfully from users table',
             'count' => $staffList->count(),
             'staff' => $staffList,
             'data' => $staffList,
@@ -81,20 +86,21 @@ class StaffController extends Controller
 
     /**
      * POST /api/admin/staff or /api/staff
-     * Add staff API for Admin
+     * Add staff user for Admin
      */
     public function store(Request $request)
     {
         $validatedData = $request->validate([
             'name' => 'required|string|max:100',
-            'email' => 'required|email|max:100|unique:staff,email',
+            'email' => 'required|email|max:100|unique:users,email',
             'phone' => 'required|string|max:20',
             'role' => 'required|string|max:50',
             'shift' => 'nullable|string|max:30',
             'status' => 'nullable|string|in:On Duty,Off Duty,On Leave',
+            'password' => 'nullable|string|min:6',
         ]);
 
-        $staff = Staff::create([
+        $user = User::create([
             'name' => $validatedData['name'],
             'email' => strtolower($validatedData['email']),
             'phone' => $validatedData['phone'],
@@ -102,13 +108,14 @@ class StaffController extends Controller
             'shift' => $validatedData['shift'] ?? 'Morning',
             'status' => $validatedData['status'] ?? 'On Duty',
             'orders_handled' => 0,
+            'password' => Hash::make($validatedData['password'] ?? 'password123'),
         ]);
 
         return response()->json([
             'status' => 'success',
-            'message' => "Staff member '{$staff->name}' registered successfully!",
-            'data' => $staff,
-            'staff' => $staff,
+            'message' => "Staff user '{$user->name}' registered successfully in users table!",
+            'data' => $user,
+            'staff' => $user,
         ], 201)->header('Access-Control-Allow-Origin', '*')
             ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE')
             ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
@@ -127,12 +134,12 @@ class StaffController extends Controller
      */
     public function show($id)
     {
-        $staff = Staff::find($id);
+        $user = User::find($id);
 
-        if (!$staff) {
+        if (!$user) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Staff member not found',
+                'message' => 'Staff user not found',
             ], 404)->header('Access-Control-Allow-Origin', '*')
                 ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE')
                 ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
@@ -140,8 +147,8 @@ class StaffController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'data' => $staff,
-            'staff' => $staff,
+            'data' => $user,
+            'staff' => $user,
         ], 200)->header('Access-Control-Allow-Origin', '*')
             ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE')
             ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
@@ -152,12 +159,12 @@ class StaffController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $staff = Staff::find($id);
+        $user = User::find($id);
 
-        if (!$staff) {
+        if (!$user) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Staff member not found',
+                'message' => 'Staff user not found',
             ], 404)->header('Access-Control-Allow-Origin', '*')
                 ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE')
                 ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
@@ -165,7 +172,7 @@ class StaffController extends Controller
 
         $validatedData = $request->validate([
             'name' => 'sometimes|required|string|max:100',
-            'email' => 'sometimes|required|email|max:100|unique:staff,email,' . $id,
+            'email' => 'sometimes|required|email|max:100|unique:users,email,' . $id,
             'phone' => 'sometimes|required|string|max:20',
             'role' => 'sometimes|required|string|max:50',
             'shift' => 'nullable|string|max:30',
@@ -173,13 +180,13 @@ class StaffController extends Controller
             'orders_handled' => 'nullable|integer|min:0',
         ]);
 
-        $staff->update($validatedData);
+        $user->update($validatedData);
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Staff member details updated successfully',
-            'data' => $staff,
-            'staff' => $staff,
+            'message' => 'Staff user details updated successfully',
+            'data' => $user,
+            'staff' => $user,
         ], 200)->header('Access-Control-Allow-Origin', '*')
             ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE')
             ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
@@ -190,22 +197,22 @@ class StaffController extends Controller
      */
     public function destroy($id)
     {
-        $staff = Staff::find($id);
+        $user = User::find($id);
 
-        if (!$staff) {
+        if (!$user) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Staff member not found',
+                'message' => 'Staff user not found',
             ], 404)->header('Access-Control-Allow-Origin', '*')
                 ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE')
                 ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
         }
 
-        $staff->delete();
+        $user->delete();
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Staff member removed successfully',
+            'message' => 'Staff user removed successfully from users table',
             'id' => $id,
         ], 200)->header('Access-Control-Allow-Origin', '*')
             ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE')

@@ -16,8 +16,12 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->string('phone')->nullable();
+            $table->string('role')->nullable()->default('Waiter');
+            $table->string('shift')->nullable()->default('Morning');
+            $table->string('status')->nullable()->default('On Duty');
+            $table->integer('orders_handled')->default(0);
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
+            $table->string('password')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });
