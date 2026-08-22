@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\DishController;
 use App\Http\Controllers\Api\TableController;
+use App\Http\Controllers\Api\StaffController;
 
 Route::get('/', [HomeController::class, 'index']);
 Route::get('/home', [HomeController::class, 'index']);
@@ -29,6 +30,15 @@ Route::post('/create-table', [TableController::class, 'store']);
 Route::get('/tables/{id}', [TableController::class, 'show']);
 Route::put('/tables/{id}', [TableController::class, 'update']);
 Route::delete('/tables/{id}', [TableController::class, 'destroy']);
+
+// Staff Management APIs for Admin & App
+Route::get('/staff', [StaffController::class, 'index']);
+Route::post('/staff', [StaffController::class, 'store']);
+Route::post('/admin/staff', [StaffController::class, 'store']);
+Route::post('/create-staff', [StaffController::class, 'store']);
+Route::get('/staff/{id}', [StaffController::class, 'show']);
+Route::put('/staff/{id}', [StaffController::class, 'update']);
+Route::delete('/staff/{id}', [StaffController::class, 'destroy']);
 
 Route::get('/stdcall', [StudentController::class, 'index'])->name('stdcall');
 Route::get('/students', [StudentController::class, 'index']);

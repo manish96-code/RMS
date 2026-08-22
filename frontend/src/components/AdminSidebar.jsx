@@ -9,8 +9,9 @@ const AdminSidebar = ({ dishesCount = 0 }) => {
     { path: '/admin/add-product', label: 'Add New Product', icon: '➕' },
     { path: '/admin/products', label: 'Manage Products', icon: '🍕', badge: dishesCount },
     { path: '/admin/tables', label: 'Manage Tables', icon: '🪑' },
-    { path: '/admin/transactions', label: 'Transactions Log', icon: '💳' },
     { path: '/admin/staff', label: 'Staff Duty Roster', icon: '👥' },
+    { path: '/admin/add-staff', label: 'Add Staff Member', icon: '📝' },
+    { path: '/admin/transactions', label: 'Transactions Log', icon: '💳' },
   ]
 
   return (
@@ -61,15 +62,8 @@ const AdminSidebar = ({ dishesCount = 0 }) => {
 
           <div className="pt-4 border-t border-slate-800/80 space-y-1">
             <Link
-              to="/create"
-              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 transition"
-            >
-              <span>📝</span> Add Staff Member
-            </Link>
-
-            <Link
               to="/"
-              className="w-full flex items-center justify-between px-3 py-2.5 rounded-lg bg-slate-800/60 hover:bg-slate-800 text-slate-300 hover:text-white transition text-xs font-semibold mt-2"
+              className="w-full flex items-center justify-between px-3 py-2.5 rounded-lg bg-slate-800/60 hover:bg-slate-800 text-slate-300 hover:text-white transition text-xs font-semibold"
             >
               <div className="flex items-center gap-2">
                 <span>💻</span> Open POS Terminal

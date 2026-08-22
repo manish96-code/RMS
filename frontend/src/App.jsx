@@ -13,6 +13,7 @@ import ViewProduct from './pages/admin/ViewProduct'
 import ManageTables from './pages/admin/ManageTables'
 import Transactions from './pages/admin/Transactions'
 import StaffRoster from './pages/admin/StaffRoster'
+import AddStaff from './pages/admin/AddStaff'
 
 const App = () => {
   const location = useLocation()
@@ -119,8 +120,9 @@ const App = () => {
           <Route path="/admin/view-product/:id" element={<ViewProduct />} />
           <Route path="/admin/edit-product/:id" element={<EditProduct />} />
           <Route path="/admin/tables" element={<ManageTables />} />
-          <Route path="/admin/transactions" element={<Transactions />} />
           <Route path="/admin/staff" element={<StaffRoster />} />
+          <Route path="/admin/add-staff" element={<AddStaff />} />
+          <Route path="/admin/transactions" element={<Transactions />} />
           <Route path="/create" element={<Create />} />
           <Route path="/edit/:id" element={<Edit />} />
         </Routes>
