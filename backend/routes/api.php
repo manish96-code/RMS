@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\HomeController;
 use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\DishController;
+use App\Http\Controllers\Api\TableController;
 
 Route::get('/', [HomeController::class, 'index']);
 Route::get('/home', [HomeController::class, 'index']);
@@ -19,6 +20,15 @@ Route::post('/create-dish', [DishController::class, 'store']);
 Route::get('/dishes/{id}', [DishController::class, 'show']);
 Route::put('/dishes/{id}', [DishController::class, 'update']);
 Route::delete('/dishes/{id}', [DishController::class, 'destroy']);
+
+// Table Management APIs for Admin & App
+Route::get('/tables', [TableController::class, 'index']);
+Route::post('/tables', [TableController::class, 'store']);
+Route::post('/admin/tables', [TableController::class, 'store']);
+Route::post('/create-table', [TableController::class, 'store']);
+Route::get('/tables/{id}', [TableController::class, 'show']);
+Route::put('/tables/{id}', [TableController::class, 'update']);
+Route::delete('/tables/{id}', [TableController::class, 'destroy']);
 
 Route::get('/stdcall', [StudentController::class, 'index'])->name('stdcall');
 Route::get('/students', [StudentController::class, 'index']);

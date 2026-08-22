@@ -8,6 +8,7 @@ const AdminSidebar = ({ dishesCount = 0 }) => {
     { path: '/admin', label: 'Dashboard Overview', icon: '📊' },
     { path: '/admin/add-product', label: 'Add New Product', icon: '➕' },
     { path: '/admin/products', label: 'Manage Products', icon: '🍕', badge: dishesCount },
+    { path: '/admin/tables', label: 'Manage Tables', icon: '🪑' },
     { path: '/admin/transactions', label: 'Transactions Log', icon: '💳' },
     { path: '/admin/staff', label: 'Staff Duty Roster', icon: '👥' },
   ]

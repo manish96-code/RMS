@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Dish;
+use App\Models\RestaurantTable;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -16,6 +17,14 @@ class HomeController extends Controller
         if ($dbDishes->isEmpty()) {
             app(DishController::class)->index();
             $dbDishes = Dish::latest()->get();
+        }
+
+        // Fetch tables from DB, or seed initial tables if empty
+        $dbTables = RestaurantTable::orderBy('id', 'asc')->get();
+
+        if ($dbTables->isEmpty()) {
+            app(TableController::class)->index();
+            $dbTables = RestaurantTable::orderBy('id', 'asc')->get();
         }
 
         $restaurantInfo = [
@@ -31,8 +40,8 @@ class HomeController extends Controller
             'today_revenue' => 42850,
             'total_orders' => 38,
             'active_orders' => 12,
-            'occupied_tables' => 9,
-            'total_tables' => 15,
+            'occupied_tables' => $dbTables->where('status', 'Occupied')->count(),
+            'total_tables' => $dbTables->count(),
             'pending_kitchen' => 4,
             'active_dishes_count' => $dbDishes->count(),
         ];
@@ -43,17 +52,6 @@ class HomeController extends Controller
             ['id' => 3, 'name' => 'Pizzas & Burgers', 'count' => $dbDishes->where('category', 'Pizzas & Burgers')->count(), 'icon' => '🍕', 'image' => 'https://images.unsplash.com/photo-1513104890138-7c749659a591?w=400'],
             ['id' => 4, 'name' => 'Desserts', 'count' => $dbDishes->where('category', 'Desserts')->count(), 'icon' => '🍰', 'image' => 'https://images.unsplash.com/photo-1551024709-8f23befc6f87?w=400'],
             ['id' => 5, 'name' => 'Beverages', 'count' => $dbDishes->where('category', 'Beverages')->count(), 'icon' => '🍹', 'image' => 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=400'],
-        ];
-
-        $tablesOverview = [
-            ['table_no' => 'T-01', 'capacity' => 2, 'status' => 'Occupied', 'guest_count' => 2, 'order_id' => '#204', 'time_seated' => '25 mins ago'],
-            ['table_no' => 'T-02', 'capacity' => 4, 'status' => 'Available', 'guest_count' => 0, 'order_id' => null, 'time_seated' => null],
-            ['table_no' => 'T-03', 'capacity' => 4, 'status' => 'Occupied', 'guest_count' => 3, 'order_id' => '#205', 'time_seated' => '40 mins ago'],
-            ['table_no' => 'T-04', 'capacity' => 6, 'status' => 'Reserved', 'guest_count' => 0, 'order_id' => null, 'time_seated' => 'In 15 mins'],
-            ['table_no' => 'T-05', 'capacity' => 2, 'status' => 'Available', 'guest_count' => 0, 'order_id' => null, 'time_seated' => null],
-            ['table_no' => 'T-06', 'capacity' => 8, 'status' => 'Occupied', 'guest_count' => 7, 'order_id' => '#208', 'time_seated' => '10 mins ago'],
-            ['table_no' => 'T-07', 'capacity' => 4, 'status' => 'Cleaning', 'guest_count' => 0, 'order_id' => null, 'time_seated' => null],
-            ['table_no' => 'T-08', 'capacity' => 2, 'status' => 'Available', 'guest_count' => 0, 'order_id' => null, 'time_seated' => null],
         ];
 
         $recentOrders = [
@@ -70,7 +68,7 @@ class HomeController extends Controller
             'stats' => $stats,
             'categories' => $categories,
             'featured_dishes' => $dbDishes,
-            'tables' => $tablesOverview,
+            'tables' => $dbTables,
             'recent_orders' => $recentOrders,
         ], 200)->header('Access-Control-Allow-Origin', '*')
             ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE')
