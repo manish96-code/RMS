@@ -15,6 +15,8 @@ const AddStaff = () => {
     status: 'On Duty',
   })
 
+  // Dynamic Backend Validation Errors
+  const [fieldErrors, setFieldErrors] = useState({})
   const [alertStatus, setAlertStatus] = useState({ type: '', message: '' })
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -24,12 +26,21 @@ const AddStaff = () => {
       ...prev,
       [name]: value,
     }))
+
+    // Clear backend error for specific field on input change
+    if (fieldErrors[name]) {
+      setFieldErrors((prev) => ({
+        ...prev,
+        [name]: '',
+      }))
+    }
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setIsSubmitting(true)
     setAlertStatus({ type: '', message: '' })
+    setFieldErrors({})
 
     try {
       const response = await fetch(`${API_BASE_URL}/api/admin/staff`, {
@@ -55,14 +66,25 @@ const AddStaff = () => {
           shift: 'Morning',
           status: 'On Duty',
         })
+        setFieldErrors({})
         setTimeout(() => {
           navigate('/admin/staff')
         }, 1500)
       } else {
-        setAlertStatus({
-          type: 'error',
-          message: data.message || 'Failed to register staff member.',
-        })
+        // If specific field errors exist, show them inline ONLY (don't duplicate in top flash alert)
+        if (data.errors) {
+          const parsedErrors = {}
+          Object.keys(data.errors).forEach((key) => {
+            parsedErrors[key] = data.errors[key][0]
+          })
+          setFieldErrors(parsedErrors)
+        } else {
+          // Only show top flash alert for general non-field errors
+          setAlertStatus({
+            type: 'error',
+            message: data.message || 'Failed to register staff member.',
+          })
+        }
       }
     } catch {
       setAlertStatus({
@@ -100,7 +122,7 @@ const AddStaff = () => {
           </Link>
         </div>
 
-        {/* Status Notification */}
+        {/* Status Notification (Shown for Success & General System Errors) */}
         {alertStatus.message && (
           <div
             className={`p-3.5 rounded-lg text-xs font-semibold flex items-center gap-2 border ${
@@ -115,7 +137,7 @@ const AddStaff = () => {
 
         {/* Add Staff Form Card */}
         <div className="max-w-2xl bg-white border border-slate-200 rounded-xl p-6 shadow-2xs">
-          <form onSubmit={handleSubmit} className="space-y-4 text-xs font-medium">
+          <form onSubmit={handleSubmit} noValidate className="space-y-4 text-xs font-medium">
             
             {/* Full Name */}
             <div>
@@ -126,12 +148,20 @@ const AddStaff = () => {
                 type="text"
                 id="name"
                 name="name"
-                required
                 value={formData.name}
                 onChange={handleChange}
                 placeholder="e.g. Rajesh Kumar"
-                className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 bg-white text-slate-900 text-xs focus:outline-none focus:border-slate-800 focus:ring-1 focus:ring-slate-800 transition"
+                className={`w-full px-3.5 py-2.5 rounded-lg border text-xs focus:outline-none transition ${
+                  fieldErrors.name
+                    ? 'border-rose-400 bg-rose-50/20 text-rose-900 focus:border-rose-600 focus:ring-1 focus:ring-rose-600'
+                    : 'border-slate-300 bg-white text-slate-900 focus:border-slate-800 focus:ring-1 focus:ring-slate-800'
+                }`}
               />
+              {fieldErrors.name && (
+                <span className="text-rose-600 text-[11px] font-semibold mt-1 block flex items-center gap-1">
+                  ⚠️ {fieldErrors.name}
+                </span>
+              )}
             </div>
 
             {/* Email & Contact */}
@@ -144,12 +174,20 @@ const AddStaff = () => {
                   type="email"
                   id="email"
                   name="email"
-                  required
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="rajesh@gourmethaven.com"
-                  className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 bg-white text-slate-900 text-xs focus:outline-none focus:border-slate-800 focus:ring-1 focus:ring-slate-800 transition"
+                  className={`w-full px-3.5 py-2.5 rounded-lg border text-xs focus:outline-none transition ${
+                    fieldErrors.email
+                      ? 'border-rose-400 bg-rose-50/20 text-rose-900 focus:border-rose-600 focus:ring-1 focus:ring-rose-600'
+                      : 'border-slate-300 bg-white text-slate-900 focus:border-slate-800 focus:ring-1 focus:ring-slate-800'
+                  }`}
                 />
+                {fieldErrors.email && (
+                  <span className="text-rose-600 text-[11px] font-semibold mt-1 block flex items-center gap-1">
+                    ⚠️ {fieldErrors.email}
+                  </span>
+                )}
               </div>
 
               <div>
@@ -160,12 +198,20 @@ const AddStaff = () => {
                   type="tel"
                   id="phone"
                   name="phone"
-                  required
                   value={formData.phone}
                   onChange={handleChange}
                   placeholder="+91 98765 43210"
-                  className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 bg-white text-slate-900 text-xs focus:outline-none focus:border-slate-800 focus:ring-1 focus:ring-slate-800 transition"
+                  className={`w-full px-3.5 py-2.5 rounded-lg border text-xs focus:outline-none transition ${
+                    fieldErrors.phone
+                      ? 'border-rose-400 bg-rose-50/20 text-rose-900 focus:border-rose-600 focus:ring-1 focus:ring-rose-600'
+                      : 'border-slate-300 bg-white text-slate-900 focus:border-slate-800 focus:ring-1 focus:ring-slate-800'
+                  }`}
                 />
+                {fieldErrors.phone && (
+                  <span className="text-rose-600 text-[11px] font-semibold mt-1 block flex items-center gap-1">
+                    ⚠️ {fieldErrors.phone}
+                  </span>
+                )}
               </div>
             </div>
 
@@ -190,6 +236,11 @@ const AddStaff = () => {
                   <option value="Floor Supervisor">Floor Supervisor</option>
                   <option value="Manager">Restaurant Manager</option>
                 </select>
+                {fieldErrors.role && (
+                  <span className="text-rose-600 text-[11px] font-semibold mt-1 block flex items-center gap-1">
+                    ⚠️ {fieldErrors.role}
+                  </span>
+                )}
               </div>
 
               <div>
