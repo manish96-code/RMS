@@ -23,6 +23,7 @@ class StaffController extends Controller
                     'role' => 'Head Chef',
                     'shift' => 'Morning',
                     'status' => 'On Duty',
+                    'is_active' => true,
                     'orders_handled' => 24,
                     'password' => Hash::make('password123'),
                 ],
@@ -33,6 +34,7 @@ class StaffController extends Controller
                     'role' => 'Senior Waiter',
                     'shift' => 'Morning',
                     'status' => 'On Duty',
+                    'is_active' => true,
                     'orders_handled' => 18,
                     'password' => Hash::make('password123'),
                 ],
@@ -43,6 +45,7 @@ class StaffController extends Controller
                     'role' => 'Cashier',
                     'shift' => 'Evening',
                     'status' => 'On Duty',
+                    'is_active' => true,
                     'orders_handled' => 38,
                     'password' => Hash::make('password123'),
                 ],
@@ -53,6 +56,7 @@ class StaffController extends Controller
                     'role' => 'Floor Supervisor',
                     'shift' => 'Night',
                     'status' => 'Off Duty',
+                    'is_active' => true,
                     'orders_handled' => 0,
                     'password' => Hash::make('password123'),
                 ]
@@ -86,7 +90,6 @@ class StaffController extends Controller
 
     /**
      * POST /api/admin/staff or /api/staff
-     * Add staff user for Admin
      */
     public function store(Request $request)
     {
@@ -97,6 +100,7 @@ class StaffController extends Controller
             'role' => 'required|string|max:50',
             'shift' => 'nullable|string|max:30',
             'status' => 'nullable|string|in:On Duty,Off Duty,On Leave',
+            'is_active' => 'nullable|boolean',
             'password' => 'nullable|string|min:6',
         ]);
 
@@ -107,13 +111,14 @@ class StaffController extends Controller
             'role' => $validatedData['role'],
             'shift' => $validatedData['shift'] ?? 'Morning',
             'status' => $validatedData['status'] ?? 'On Duty',
+            'is_active' => $validatedData['is_active'] ?? true,
             'orders_handled' => 0,
             'password' => Hash::make($validatedData['password'] ?? 'password123'),
         ]);
 
         return response()->json([
             'status' => 'success',
-            'message' => "Staff user '{$user->name}' registered successfully in users table!",
+            'message' => "Staff user '{$user->name}' registered successfully!",
             'data' => $user,
             'staff' => $user,
         ], 201)->header('Access-Control-Allow-Origin', '*')
@@ -177,6 +182,7 @@ class StaffController extends Controller
             'role' => 'sometimes|required|string|max:50',
             'shift' => 'nullable|string|max:30',
             'status' => 'nullable|string|in:On Duty,Off Duty,On Leave',
+            'is_active' => 'nullable|boolean',
             'orders_handled' => 'nullable|integer|min:0',
         ]);
 
@@ -212,7 +218,7 @@ class StaffController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Staff user removed successfully from users table',
+            'message' => 'Staff user removed successfully',
             'id' => $id,
         ], 200)->header('Access-Control-Allow-Origin', '*')
             ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE')

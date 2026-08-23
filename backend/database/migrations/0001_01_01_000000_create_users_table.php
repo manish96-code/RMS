@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('role')->nullable()->default('Waiter');
             $table->string('shift')->nullable()->default('Morning');
             $table->string('status')->nullable()->default('On Duty');
+            $table->boolean('is_active')->default(true);
             $table->integer('orders_handled')->default(0);
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password')->nullable();

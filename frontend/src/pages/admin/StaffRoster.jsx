@@ -58,7 +58,7 @@ const StaffRoster = () => {
     }
   }
 
-  const handleToggleStatus = async (staffMember) => {
+  const handleToggleDutyStatus = async (staffMember) => {
     const nextStatus = staffMember.status === 'On Duty' ? 'Off Duty' : 'On Duty'
 
     try {
@@ -74,10 +74,33 @@ const StaffRoster = () => {
         setStaffList((prev) =>
           prev.map((s) => (s.id === staffMember.id ? { ...s, status: nextStatus } : s))
         )
-        showToast(`Updated ${staffMember.name}'s status to "${nextStatus}".`)
+        showToast(`Updated ${staffMember.name}'s duty status to "${nextStatus}".`)
       }
     } catch {
       alert('Unable to update staff status.')
+    }
+  }
+
+  const handleToggleActiveStatus = async (staffMember) => {
+    const nextActiveState = !staffMember.is_active
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/staff/${staffMember.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ is_active: nextActiveState }),
+      })
+
+      if (response.ok) {
+        setStaffList((prev) =>
+          prev.map((s) => (s.id === staffMember.id ? { ...s, is_active: nextActiveState } : s))
+        )
+        showToast(`Account for ${staffMember.name} set to ${nextActiveState ? 'Active' : 'Inactive'}.`)
+      }
+    } catch {
+      alert('Unable to update active status.')
     }
   }
 
@@ -88,8 +111,8 @@ const StaffRoster = () => {
       member.email.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
-  const onDutyCount = staffList.filter((s) => s.status === 'On Duty').length
-  const offDutyCount = staffList.filter((s) => s.status === 'Off Duty').length
+  const activeCount = staffList.filter((s) => s.is_active).length
+  const onDutyCount = staffList.filter((s) => s.status === 'On Duty' && s.is_active).length
 
   return (
     <div className="flex min-h-screen bg-slate-50 text-slate-800 antialiased text-left font-sans">
@@ -113,7 +136,7 @@ const StaffRoster = () => {
           <div>
             <h1 className="text-xl font-bold text-slate-900 tracking-tight">Staff & Duty Roster</h1>
             <p className="text-xs text-slate-500 mt-0.5">
-              Active kitchen chefs, waiters, cashiers & shift management ({staffList.length} total staff)
+              Active kitchen chefs, waiters, cashiers & user account management ({staffList.length} total users)
             </p>
           </div>
 
@@ -128,29 +151,29 @@ const StaffRoster = () => {
         {/* Summary Metric Badges */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
           <div className="bg-white p-3.5 rounded-xl border border-slate-200 shadow-2xs">
-            <span className="text-[10px] uppercase font-bold text-slate-400 block">Total Staff</span>
+            <span className="text-[10px] uppercase font-bold text-slate-400 block">Total Registered</span>
             <span className="text-xl font-bold text-slate-900">{staffList.length}</span>
           </div>
 
           <div className="bg-white p-3.5 rounded-xl border border-slate-200 shadow-2xs">
-            <span className="text-[10px] uppercase font-bold text-emerald-600 block">On Duty</span>
-            <span className="text-xl font-bold text-emerald-700">{onDutyCount}</span>
+            <span className="text-[10px] uppercase font-bold text-emerald-600 block">Active Accounts (is_active)</span>
+            <span className="text-xl font-bold text-emerald-700">{activeCount}</span>
           </div>
 
           <div className="bg-white p-3.5 rounded-xl border border-slate-200 shadow-2xs">
-            <span className="text-[10px] uppercase font-bold text-slate-500 block">Off Duty</span>
-            <span className="text-xl font-bold text-slate-700">{offDutyCount}</span>
+            <span className="text-[10px] uppercase font-bold text-blue-600 block">On Duty Today</span>
+            <span className="text-xl font-bold text-blue-700">{onDutyCount}</span>
           </div>
 
           <div className="bg-white p-3.5 rounded-xl border border-slate-200 shadow-2xs">
-            <span className="text-[10px] uppercase font-bold text-blue-600 block">Active Shifts</span>
-            <span className="text-xl font-bold text-blue-700">3 Shifts</span>
+            <span className="text-[10px] uppercase font-bold text-slate-500 block">Active Shifts</span>
+            <span className="text-xl font-bold text-slate-700">3 Shifts</span>
           </div>
         </div>
 
         {/* Search Bar */}
         <div className="flex items-center justify-between bg-white p-3 rounded-xl border border-slate-200 shadow-2xs">
-          <span className="text-xs font-bold text-slate-700">Restaurant Staff Directory</span>
+          <span className="text-xs font-bold text-slate-700">Staff User Directory</span>
           <input
             type="text"
             placeholder="Search staff by name or role..."
@@ -164,7 +187,7 @@ const StaffRoster = () => {
         {loading && (
           <div className="py-16 text-center text-slate-500 bg-white rounded-xl border border-slate-200">
             <div className="inline-block animate-spin w-6 h-6 border-2 border-slate-800 border-t-transparent rounded-full mb-2"></div>
-            <p className="text-xs font-medium">Loading staff roster...</p>
+            <p className="text-xs font-medium">Loading staff user roster...</p>
           </div>
         )}
 
@@ -175,50 +198,11 @@ const StaffRoster = () => {
           </div>
         )}
 
-        {/* Roster Cards Grid */}
-        {!loading && !error && (
-          <div className="space-y-4">
-            <h2 className="text-sm font-bold text-slate-900">Shift Roster Grid</h2>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {filteredStaff.map((member) => (
-                <div key={member.id} className="bg-white border border-slate-200 p-4 rounded-xl space-y-3 shadow-2xs">
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-slate-900 text-xs">{member.name}</span>
-                    <button
-                      onClick={() => handleToggleStatus(member)}
-                      title="Click to toggle duty status"
-                      className={`px-2 py-0.5 rounded text-[10px] font-semibold cursor-pointer transition ${
-                        member.status === 'On Duty'
-                          ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100'
-                          : 'bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-200'
-                      }`}
-                    >
-                      {member.status}
-                    </button>
-                  </div>
-
-                  <div>
-                    <p className="text-xs font-semibold text-slate-700">{member.role}</p>
-                    <p className="text-[10px] text-slate-400">{member.email}</p>
-                    <p className="text-[10px] text-slate-400">{member.phone}</p>
-                  </div>
-
-                  <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px]">
-                    <span className="text-slate-500 font-medium">Shift: <strong className="text-slate-800">{member.shift || 'Morning'}</strong></span>
-                    <span className="text-slate-500 font-medium">Orders: <strong className="text-slate-800">{member.orders_handled}</strong></span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
         {/* Detailed Table View */}
         {!loading && !error && (
           <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-2xs space-y-3 p-5">
             <h2 className="text-sm font-bold text-slate-900 border-b border-slate-100 pb-3">
-              All Staff Members Table ({filteredStaff.length})
+              Staff Users List ({filteredStaff.length})
             </h2>
 
             <div className="overflow-x-auto border border-slate-200 rounded-lg">
@@ -230,6 +214,7 @@ const StaffRoster = () => {
                     <th className="px-4 py-3">Email / Contact</th>
                     <th className="px-4 py-3">Role</th>
                     <th className="px-4 py-3">Shift</th>
+                    <th className="px-4 py-3">Account Status (is_active)</th>
                     <th className="px-4 py-3">Duty Status</th>
                     <th className="px-4 py-3 text-right">Actions</th>
                   </tr>
@@ -245,18 +230,35 @@ const StaffRoster = () => {
                       </td>
                       <td className="px-4 py-3.5 font-semibold text-slate-800">{member.role}</td>
                       <td className="px-4 py-3.5 text-slate-600">{member.shift || 'Morning'}</td>
+
+                      {/* is_active Toggle Button */}
                       <td className="px-4 py-3.5">
                         <button
-                          onClick={() => handleToggleStatus(member)}
+                          onClick={() => handleToggleActiveStatus(member)}
+                          className={`px-2.5 py-1 rounded text-[11px] font-bold cursor-pointer transition ${
+                            member.is_active
+                              ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100'
+                              : 'bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100'
+                          }`}
+                        >
+                          {member.is_active ? '🟢 Active' : '🔴 Inactive'}
+                        </button>
+                      </td>
+
+                      {/* Duty Status Toggle */}
+                      <td className="px-4 py-3.5">
+                        <button
+                          onClick={() => handleToggleDutyStatus(member)}
                           className={`px-2 py-0.5 rounded text-[10px] font-semibold cursor-pointer ${
                             member.status === 'On Duty'
-                              ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                              ? 'bg-blue-50 text-blue-700 border border-blue-200'
                               : 'bg-slate-100 text-slate-600 border border-slate-200'
                           }`}
                         >
                           {member.status}
                         </button>
                       </td>
+
                       <td className="px-4 py-3.5 text-right">
                         <button
                           onClick={() => handleDeleteStaff(member.id, member.name)}
