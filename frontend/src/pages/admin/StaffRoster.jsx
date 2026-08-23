@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { toast } from 'react-hot-toast'
 import AdminSidebar from '../../components/AdminSidebar'
 import { API_BASE_URL } from '../../../config'
 
@@ -8,7 +9,6 @@ const StaffRoster = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [searchQuery, setSearchQuery] = useState('')
-  const [toastMessage, setToastMessage] = useState('')
 
   const fetchStaff = () => {
     setLoading(true)
@@ -33,11 +33,6 @@ const StaffRoster = () => {
     fetchStaff()
   }, [])
 
-  const showToast = (msg) => {
-    setToastMessage(msg)
-    setTimeout(() => setToastMessage(''), 3000)
-  }
-
   const handleDeleteStaff = async (id, name) => {
     if (!window.confirm(`Are you sure you want to remove staff member "${name}"?`)) {
       return
@@ -49,12 +44,12 @@ const StaffRoster = () => {
       })
       if (response.ok) {
         setStaffList((prev) => prev.filter((s) => s.id !== id))
-        showToast(`Staff member "${name}" removed.`)
+        toast.success(`Staff member "${name}" removed.`)
       } else {
-        alert('Failed to delete staff member.')
+        toast.error('Failed to delete staff member.')
       }
     } catch {
-      alert('Unable to connect to server.')
+      toast.error('Unable to connect to server.')
     }
   }
 
@@ -74,10 +69,10 @@ const StaffRoster = () => {
         setStaffList((prev) =>
           prev.map((s) => (s.id === staffMember.id ? { ...s, status: nextStatus } : s))
         )
-        showToast(`Updated ${staffMember.name}'s duty status to "${nextStatus}".`)
+        toast.success(`Updated ${staffMember.name}'s duty status to "${nextStatus}".`)
       }
     } catch {
-      alert('Unable to update staff status.')
+      toast.error('Unable to update staff status.')
     }
   }
 
@@ -97,10 +92,10 @@ const StaffRoster = () => {
         setStaffList((prev) =>
           prev.map((s) => (s.id === staffMember.id ? { ...s, is_active: nextActiveState } : s))
         )
-        showToast(`Account for ${staffMember.name} set to ${nextActiveState ? 'Active' : 'Inactive'}.`)
+        toast.success(`Account for ${staffMember.name} set to ${nextActiveState ? 'Active' : 'Inactive'}.`)
       }
     } catch {
-      alert('Unable to update active status.')
+      toast.error('Unable to update active status.')
     }
   }
 
@@ -119,14 +114,6 @@ const StaffRoster = () => {
       
       {/* Shared Admin Sidebar */}
       <AdminSidebar />
-
-      {/* Toast Notification */}
-      {toastMessage && (
-        <div className="fixed top-5 right-5 z-50 bg-slate-900 text-white text-xs font-medium px-4 py-2.5 rounded-lg shadow-md flex items-center gap-2 border border-slate-800">
-          <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
-          <span>{toastMessage}</span>
-        </div>
-      )}
 
       {/* Main Content */}
       <main className="flex-1 min-h-screen overflow-y-auto p-6 lg:p-8 space-y-6">

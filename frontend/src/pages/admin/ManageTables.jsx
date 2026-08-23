@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { toast } from 'react-hot-toast'
 import AdminSidebar from '../../components/AdminSidebar'
 import { API_BASE_URL } from '../../../config'
 
@@ -6,7 +7,6 @@ const ManageTables = () => {
   const [tables, setTables] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const [toastNotice, setToastNotice] = useState('')
   const [showAddTableModal, setShowAddTableModal] = useState(false)
 
   // Add Table Form State
@@ -40,11 +40,6 @@ const ManageTables = () => {
     fetchTables()
   }, [])
 
-  const showToast = (msg) => {
-    setToastNotice(msg)
-    setTimeout(() => setToastNotice(''), 3000)
-  }
-
   // Handle Add Table Submit
   const handleCreateTableSubmit = async (e) => {
     e.preventDefault()
@@ -66,15 +61,15 @@ const ManageTables = () => {
       const data = await response.json()
 
       if (response.ok) {
-        showToast(data.message || `Table ${newTable.table_no} added successfully!`)
+        toast.success(data.message || `Table ${newTable.table_no} added successfully!`)
         setShowAddTableModal(false)
         setNewTable({ table_no: '', capacity: 4, status: 'Available' })
         fetchTables()
       } else {
-        alert(data.message || 'Failed to add table. Check table number uniqueness.')
+        toast.error(data.message || 'Failed to add table. Check table number uniqueness.')
       }
     } catch {
-      alert('Unable to connect to server.')
+      toast.error('Unable to connect to server.')
     } finally {
       setIsSubmitting(false)
     }
@@ -92,12 +87,12 @@ const ManageTables = () => {
       })
       if (response.ok) {
         setTables((prev) => prev.filter((t) => t.id !== id))
-        showToast(`Table ${tableNo} removed.`)
+        toast.success(`Table ${tableNo} removed.`)
       } else {
-        alert('Failed to delete table.')
+        toast.error('Failed to delete table.')
       }
     } catch {
-      alert('Unable to connect to server.')
+      toast.error('Unable to connect to server.')
     }
   }
 
@@ -112,14 +107,6 @@ const ManageTables = () => {
       
       {/* Shared Admin Sidebar */}
       <AdminSidebar />
-
-      {/* Toast Notification */}
-      {toastNotice && (
-        <div className="fixed top-5 right-5 z-50 bg-slate-900 text-white text-xs font-medium px-4 py-2.5 rounded-lg shadow-md flex items-center gap-2 border border-slate-800">
-          <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
-          <span>{toastNotice}</span>
-        </div>
-      )}
 
       {/* Add Table Modal */}
       {showAddTableModal && (

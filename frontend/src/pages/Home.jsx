@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { toast } from 'react-hot-toast'
 import { API_BASE_URL } from '../../config'
 
 const Home = () => {
@@ -18,7 +19,6 @@ const Home = () => {
   ])
   const [selectedTable, setSelectedTable] = useState('T-01')
   const [orderType, setOrderType] = useState('Dine-In') // 'Dine-In', 'Takeaway', 'Delivery'
-  const [toastMessage, setToastMessage] = useState('')
   const [showCheckoutModal, setShowCheckoutModal] = useState(false)
 
   const fetchRestaurantData = () => {
@@ -110,8 +110,7 @@ const Home = () => {
   }
 
   const showToast = (msg) => {
-    setToastMessage(msg)
-    setTimeout(() => setToastMessage(''), 3000)
+    toast.success(msg)
   }
 
   // Bill Calculations
@@ -139,14 +138,6 @@ const Home = () => {
 
   return (
     <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 text-left">
-
-      {/* Floating Toast Notification */}
-      {toastMessage && (
-        <div className="fixed top-20 right-6 z-50 bg-slate-900 text-white text-xs font-bold px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-3 border border-slate-700 animate-bounce">
-          <span className="text-base">✨</span>
-          <span>{toastMessage}</span>
-        </div>
-      )}
 
       {/* Checkout Modal */}
       {showCheckoutModal && (

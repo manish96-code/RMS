@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { toast } from 'react-hot-toast'
 import AdminSidebar from '../../components/AdminSidebar'
 import { API_BASE_URL } from '../../../config'
 
@@ -15,7 +16,6 @@ const AddProduct = () => {
     image: '',
   })
 
-  const [status, setStatus] = useState({ type: '', message: '' })
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const handleChange = (e) => {
@@ -29,7 +29,6 @@ const AddProduct = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setIsSubmitting(true)
-    setStatus({ type: '', message: '' })
 
     try {
       const response = await fetch(`${API_BASE_URL}/api/admin/dishes`, {
@@ -50,10 +49,7 @@ const AddProduct = () => {
       const data = await response.json()
 
       if (response.ok) {
-        setStatus({
-          type: 'success',
-          message: data.message || `Dish "${formData.name}" added successfully to menu!`,
-        })
+        toast.success(data.message || `Dish "${formData.name}" added successfully to menu!`)
         setFormData({
           name: '',
           category: 'Main Course',
@@ -66,16 +62,10 @@ const AddProduct = () => {
           navigate('/admin/products')
         }, 1500)
       } else {
-        setStatus({
-          type: 'error',
-          message: data.message || 'Failed to add product. Please check form details.',
-        })
+        toast.error(data.message || 'Failed to add product. Please check form details.')
       }
     } catch {
-      setStatus({
-        type: 'error',
-        message: 'Unable to connect to backend server.',
-      })
+      toast.error('Unable to connect to backend server.')
     } finally {
       setIsSubmitting(false)
     }
@@ -106,19 +96,6 @@ const AddProduct = () => {
             ← View All Products
           </Link>
         </div>
-
-        {/* Status Notification */}
-        {status.message && (
-          <div
-            className={`p-3.5 rounded-lg text-xs font-semibold flex items-center gap-2 border ${
-              status.type === 'error'
-                ? 'bg-rose-50 text-rose-700 border-rose-200'
-                : 'bg-emerald-50 text-emerald-700 border-emerald-200'
-            }`}
-          >
-            <span>{status.message}</span>
-          </div>
-        )}
 
         {/* Add Product Form Card */}
         <div className="max-w-2xl bg-white border border-slate-200 rounded-xl p-6 shadow-2xs">

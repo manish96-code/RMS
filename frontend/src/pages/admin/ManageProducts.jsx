@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { toast } from 'react-hot-toast'
 import AdminSidebar from '../../components/AdminSidebar'
 import { API_BASE_URL } from '../../../config'
 
@@ -9,7 +10,6 @@ const ManageProducts = () => {
   const [error, setError] = useState('')
   const [searchQuery, setSearchQuery] = useState('')
   const [categoryFilter, setCategoryFilter] = useState('All')
-  const [toastMessage, setToastMessage] = useState('')
 
   const fetchDishes = () => {
     setLoading(true)
@@ -34,11 +34,6 @@ const ManageProducts = () => {
     fetchDishes()
   }, [])
 
-  const showToast = (msg) => {
-    setToastMessage(msg)
-    setTimeout(() => setToastMessage(''), 3000)
-  }
-
   const handleDelete = async (id, name) => {
     if (!window.confirm(`Are you sure you want to delete "${name}" from the menu?`)) {
       return
@@ -50,12 +45,12 @@ const ManageProducts = () => {
       })
       if (response.ok) {
         setDishes((prev) => prev.filter((d) => d.id !== id))
-        showToast(`Deleted "${name}" from menu.`)
+        toast.success(`Deleted "${name}" from menu.`)
       } else {
-        alert('Failed to delete product.')
+        toast.error('Failed to delete product.')
       }
     } catch {
-      alert('Unable to connect to server.')
+      toast.error('Unable to connect to server.')
     }
   }
 
@@ -72,14 +67,6 @@ const ManageProducts = () => {
       
       {/* Shared Admin Sidebar */}
       <AdminSidebar dishesCount={dishes.length} />
-
-      {/* Toast Notification */}
-      {toastMessage && (
-        <div className="fixed top-5 right-5 z-50 bg-slate-900 text-white text-xs font-medium px-4 py-2.5 rounded-lg shadow-md flex items-center gap-2 border border-slate-800">
-          <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
-          <span>{toastMessage}</span>
-        </div>
-      )}
 
       {/* Main Content */}
       <main className="flex-1 min-h-screen overflow-y-auto p-6 lg:p-8 space-y-6">

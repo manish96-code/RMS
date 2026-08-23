@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { toast } from 'react-hot-toast'
 import AdminSidebar from '../../components/AdminSidebar'
 import { API_BASE_URL } from '../../../config'
 
@@ -17,7 +18,6 @@ const AddStaff = () => {
 
   // Dynamic Backend Validation Errors
   const [fieldErrors, setFieldErrors] = useState({})
-  const [alertStatus, setAlertStatus] = useState({ type: '', message: '' })
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const handleChange = (e) => {
@@ -39,7 +39,6 @@ const AddStaff = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setIsSubmitting(true)
-    setAlertStatus({ type: '', message: '' })
     setFieldErrors({})
 
     try {
@@ -54,10 +53,7 @@ const AddStaff = () => {
       const data = await response.json()
 
       if (response.ok) {
-        setAlertStatus({
-          type: 'success',
-          message: data.message || `Staff member "${formData.name}" registered successfully!`,
-        })
+        toast.success(data.message || `Staff member "${formData.name}" registered successfully!`)
         setFormData({
           name: '',
           email: '',
@@ -71,7 +67,7 @@ const AddStaff = () => {
           navigate('/admin/staff')
         }, 1500)
       } else {
-        // If specific field errors exist, show them inline ONLY (don't duplicate in top flash alert)
+        // Parse Laravel backend validation errors
         if (data.errors) {
           const parsedErrors = {}
           Object.keys(data.errors).forEach((key) => {
@@ -79,18 +75,11 @@ const AddStaff = () => {
           })
           setFieldErrors(parsedErrors)
         } else {
-          // Only show top flash alert for general non-field errors
-          setAlertStatus({
-            type: 'error',
-            message: data.message || 'Failed to register staff member.',
-          })
+          toast.error(data.message || 'Failed to register staff member.')
         }
       }
     } catch {
-      setAlertStatus({
-        type: 'error',
-        message: 'Unable to connect to backend server.',
-      })
+      toast.error('Unable to connect to backend server.')
     } finally {
       setIsSubmitting(false)
     }
@@ -121,19 +110,6 @@ const AddStaff = () => {
             ← View Staff Roster
           </Link>
         </div>
-
-        {/* Status Notification (Shown for Success & General System Errors) */}
-        {alertStatus.message && (
-          <div
-            className={`p-3.5 rounded-lg text-xs font-semibold flex items-center gap-2 border ${
-              alertStatus.type === 'error'
-                ? 'bg-rose-50 text-rose-700 border-rose-200'
-                : 'bg-emerald-50 text-emerald-700 border-emerald-200'
-            }`}
-          >
-            <span>{alertStatus.message}</span>
-          </div>
-        )}
 
         {/* Add Staff Form Card */}
         <div className="max-w-2xl bg-white border border-slate-200 rounded-xl p-6 shadow-2xs">

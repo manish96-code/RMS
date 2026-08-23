@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Routes, Route, Link, useLocation } from 'react-router-dom'
+import { Toaster } from 'react-hot-toast'
 import Home from './pages/Home'
 import Create from './pages/Create'
 import Edit from './pages/Edit'
@@ -29,6 +30,36 @@ const App = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 font-sans antialiased flex flex-col">
+      
+      {/* Global React Hot Toaster */}
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 3500,
+          style: {
+            background: '#0f172a',
+            color: '#f8fafc',
+            fontSize: '12px',
+            fontWeight: '600',
+            borderRadius: '8px',
+            border: '1px solid #1e293b',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
+          },
+          success: {
+            iconTheme: {
+              primary: '#10b981',
+              secondary: '#ffffff',
+            },
+          },
+          error: {
+            iconTheme: {
+              primary: '#f43f5e',
+              secondary: '#ffffff',
+            },
+          },
+        }}
+      />
+
       {/* Top Navbar (Only shown on non-admin routes) */}
       {!isAdminPage && (
         <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-xs">
