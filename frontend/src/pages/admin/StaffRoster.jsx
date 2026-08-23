@@ -259,7 +259,14 @@ const StaffRoster = () => {
                         </button>
                       </td>
 
-                      <td className="px-4 py-3.5 text-right">
+                      <td className="px-4 py-3.5 text-right flex items-center justify-end gap-1.5">
+                        <Link
+                          to={`/admin/edit-staff/${member.id}`}
+                          className="px-2.5 py-1 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded text-xs font-semibold transition"
+                        >
+                          ✏️ Edit
+                        </Link>
+
                         <button
                           onClick={() => handleDeleteStaff(member.id, member.name)}
                           className="px-2.5 py-1 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded text-xs font-semibold transition cursor-pointer"

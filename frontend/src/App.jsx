@@ -14,6 +14,7 @@ import ManageTables from './pages/admin/ManageTables'
 import Transactions from './pages/admin/Transactions'
 import StaffRoster from './pages/admin/StaffRoster'
 import AddStaff from './pages/admin/AddStaff'
+import EditStaff from './pages/admin/EditStaff'
 
 const App = () => {
   const location = useLocation()
@@ -122,6 +123,7 @@ const App = () => {
           <Route path="/admin/tables" element={<ManageTables />} />
           <Route path="/admin/staff" element={<StaffRoster />} />
           <Route path="/admin/add-staff" element={<AddStaff />} />
+          <Route path="/admin/edit-staff/:id" element={<EditStaff />} />
           <Route path="/admin/transactions" element={<Transactions />} />
           <Route path="/create" element={<Create />} />
           <Route path="/edit/:id" element={<Edit />} />
