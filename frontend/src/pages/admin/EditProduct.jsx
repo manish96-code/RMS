@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
+import { toast } from 'react-hot-toast'
 import AdminSidebar from '../../components/AdminSidebar'
 import { API_BASE_URL } from '../../../config'
 
@@ -17,7 +18,7 @@ const EditProduct = () => {
   })
 
   const [loading, setLoading] = useState(true)
-  const [status, setStatus] = useState({ type: '', message: '' })
+  const [fieldErrors, setFieldErrors] = useState({})
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   useEffect(() => {
@@ -42,7 +43,7 @@ const EditProduct = () => {
       })
       .catch((err) => {
         console.error('Error fetching dish details:', err)
-        setStatus({ type: 'error', message: 'Failed to fetch product details.' })
+        toast.error('Failed to load product details.')
         setLoading(false)
       })
   }, [id])
@@ -53,12 +54,19 @@ const EditProduct = () => {
       ...prev,
       [name]: value,
     }))
+
+    if (fieldErrors[name]) {
+      setFieldErrors((prev) => ({
+        ...prev,
+        [name]: '',
+      }))
+    }
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setIsSubmitting(true)
-    setStatus({ type: '', message: '' })
+    setFieldErrors({})
 
     try {
       const response = await fetch(`${API_BASE_URL}/api/dishes/${id}`, {
@@ -69,7 +77,7 @@ const EditProduct = () => {
         body: JSON.stringify({
           name: formData.name,
           category: formData.category,
-          price: parseFloat(formData.price),
+          price: formData.price !== '' ? parseFloat(formData.price) : '',
           prep_time: formData.prep_time,
           description: formData.description,
           image: formData.image || null,
@@ -79,24 +87,23 @@ const EditProduct = () => {
       const data = await response.json()
 
       if (response.ok) {
-        setStatus({
-          type: 'success',
-          message: data.message || `Product "${formData.name}" updated successfully!`,
-        })
+        toast.success(data.message || `Product "${formData.name}" updated successfully!`)
         setTimeout(() => {
           navigate('/admin/products')
         }, 1500)
       } else {
-        setStatus({
-          type: 'error',
-          message: data.message || 'Failed to update product.',
-        })
+        if (data.errors) {
+          const parsedErrors = {}
+          Object.keys(data.errors).forEach((key) => {
+            parsedErrors[key] = data.errors[key][0]
+          })
+          setFieldErrors(parsedErrors)
+        } else {
+          toast.error(data.message || 'Failed to update product.')
+        }
       }
     } catch {
-      setStatus({
-        type: 'error',
-        message: 'Unable to connect to server.',
-      })
+      toast.error('Unable to connect to server.')
     } finally {
       setIsSubmitting(false)
     }
@@ -129,143 +136,158 @@ const EditProduct = () => {
             <p className="text-xs font-medium">Loading product details...</p>
           </div>
         ) : (
-          <>
-            {/* Status Alert */}
-            {status.message && (
-              <div
-                className={`p-3.5 rounded-lg text-xs font-semibold flex items-center gap-2 border ${
-                  status.type === 'error'
-                    ? 'bg-rose-50 text-rose-700 border-rose-200'
-                    : 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                }`}
-              >
-                <span>{status.message}</span>
+          <div className="max-w-2xl bg-white border border-slate-200 rounded-xl p-6 shadow-2xs">
+            <form onSubmit={handleSubmit} noValidate className="space-y-4 text-xs font-medium">
+              
+              {/* Product Name */}
+              <div>
+                <label htmlFor="name" className="block font-semibold text-slate-700 mb-1">
+                  Product / Dish Name <span className="text-rose-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  placeholder="e.g. Special Butter Chicken"
+                  className={`w-full px-3.5 py-2.5 rounded-lg border text-xs focus:outline-none transition ${
+                    fieldErrors.name
+                      ? 'border-rose-400 bg-rose-50/20 text-rose-900 focus:border-rose-600 focus:ring-1 focus:ring-rose-600'
+                      : 'border-slate-300 bg-white text-slate-900 focus:border-slate-800 focus:ring-1 focus:ring-slate-800'
+                  }`}
+                />
+                {fieldErrors.name && (
+                  <span className="text-rose-600 text-[11px] font-semibold mt-1 block flex items-center gap-1">
+                    ⚠️ {fieldErrors.name}
+                  </span>
+                )}
               </div>
-            )}
 
-            {/* Edit Form */}
-            <div className="max-w-2xl bg-white border border-slate-200 rounded-xl p-6 shadow-2xs">
-              <form onSubmit={handleSubmit} className="space-y-4 text-xs font-medium">
+              {/* Category & Price */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="name" className="block font-semibold text-slate-700 mb-1">
-                    Product / Dish Name <span className="text-rose-500">*</span>
+                  <label htmlFor="category" className="block font-semibold text-slate-700 mb-1">
+                    Food Category <span className="text-rose-500">*</span>
+                  </label>
+                  <select
+                    id="category"
+                    name="category"
+                    value={formData.category}
+                    onChange={handleChange}
+                    className={`w-full px-3.5 py-2.5 rounded-lg border text-xs focus:outline-none transition ${
+                      fieldErrors.category
+                        ? 'border-rose-400 bg-rose-50/20 text-rose-900 focus:border-rose-600 focus:ring-1 focus:ring-rose-600'
+                        : 'border-slate-300 bg-white text-slate-900 focus:border-slate-800 focus:ring-1 focus:ring-slate-800'
+                    }`}
+                  >
+                    <option value="Starters">Starters</option>
+                    <option value="Main Course">Main Course</option>
+                    <option value="Pizzas & Burgers">Pizzas & Burgers</option>
+                    <option value="Desserts">Desserts</option>
+                    <option value="Beverages">Beverages</option>
+                  </select>
+                  {fieldErrors.category && (
+                    <span className="text-rose-600 text-[11px] font-semibold mt-1 block flex items-center gap-1">
+                      ⚠️ {fieldErrors.category}
+                    </span>
+                  )}
+                </div>
+
+                <div>
+                  <label htmlFor="price" className="block font-semibold text-slate-700 mb-1">
+                    Price (₹) <span className="text-rose-500">*</span>
+                  </label>
+                  <input
+                    type="number"
+                    id="price"
+                    name="price"
+                    min="0"
+                    step="0.01"
+                    value={formData.price}
+                    onChange={handleChange}
+                    placeholder="380"
+                    className={`w-full px-3.5 py-2.5 rounded-lg border text-xs focus:outline-none transition ${
+                      fieldErrors.price
+                        ? 'border-rose-400 bg-rose-50/20 text-rose-900 focus:border-rose-600 focus:ring-1 focus:ring-rose-600'
+                        : 'border-slate-300 bg-white text-slate-900 focus:border-slate-800 focus:ring-1 focus:ring-slate-800'
+                    }`}
+                  />
+                  {fieldErrors.price && (
+                    <span className="text-rose-600 text-[11px] font-semibold mt-1 block flex items-center gap-1">
+                      ⚠️ {fieldErrors.price}
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* Preparation Time & Image URL */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label htmlFor="prep_time" className="block font-semibold text-slate-700 mb-1">
+                    Preparation Time
                   </label>
                   <input
                     type="text"
-                    id="name"
-                    name="name"
-                    required
-                    value={formData.name}
+                    id="prep_time"
+                    name="prep_time"
+                    value={formData.prep_time}
                     onChange={handleChange}
-                    placeholder="e.g. Special Butter Chicken"
+                    placeholder="e.g. 18 mins"
                     className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 bg-white text-slate-900 text-xs focus:outline-none focus:border-slate-800 focus:ring-1 focus:ring-slate-800 transition"
                   />
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label htmlFor="category" className="block font-semibold text-slate-700 mb-1">
-                      Food Category <span className="text-rose-500">*</span>
-                    </label>
-                    <select
-                      id="category"
-                      name="category"
-                      value={formData.category}
-                      onChange={handleChange}
-                      className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 bg-white text-slate-900 text-xs focus:outline-none focus:border-slate-800 focus:ring-1 focus:ring-slate-800 transition"
-                    >
-                      <option value="Starters">Starters</option>
-                      <option value="Main Course">Main Course</option>
-                      <option value="Pizzas & Burgers">Pizzas & Burgers</option>
-                      <option value="Desserts">Desserts</option>
-                      <option value="Beverages">Beverages</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label htmlFor="price" className="block font-semibold text-slate-700 mb-1">
-                      Price (₹) <span className="text-rose-500">*</span>
-                    </label>
-                    <input
-                      type="number"
-                      id="price"
-                      name="price"
-                      required
-                      min="0"
-                      step="0.01"
-                      value={formData.price}
-                      onChange={handleChange}
-                      placeholder="380"
-                      className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 bg-white text-slate-900 text-xs focus:outline-none focus:border-slate-800 focus:ring-1 focus:ring-slate-800 transition"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label htmlFor="prep_time" className="block font-semibold text-slate-700 mb-1">
-                      Preparation Time
-                    </label>
-                    <input
-                      type="text"
-                      id="prep_time"
-                      name="prep_time"
-                      value={formData.prep_time}
-                      onChange={handleChange}
-                      placeholder="e.g. 18 mins"
-                      className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 bg-white text-slate-900 text-xs focus:outline-none focus:border-slate-800 focus:ring-1 focus:ring-slate-800 transition"
-                    />
-                  </div>
-
-                  <div>
-                    <label htmlFor="image" className="block font-semibold text-slate-700 mb-1">
-                      Image URL (Optional)
-                    </label>
-                    <input
-                      type="url"
-                      id="image"
-                      name="image"
-                      value={formData.image}
-                      onChange={handleChange}
-                      placeholder="https://example.com/food.jpg"
-                      className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 bg-white text-slate-900 text-xs focus:outline-none focus:border-slate-800 focus:ring-1 focus:ring-slate-800 transition"
-                    />
-                  </div>
-                </div>
-
                 <div>
-                  <label htmlFor="description" className="block font-semibold text-slate-700 mb-1">
-                    Item Description
+                  <label htmlFor="image" className="block font-semibold text-slate-700 mb-1">
+                    Image URL (Optional)
                   </label>
-                  <textarea
-                    id="description"
-                    name="description"
-                    rows="3"
-                    value={formData.description}
+                  <input
+                    type="url"
+                    id="image"
+                    name="image"
+                    value={formData.image}
                     onChange={handleChange}
-                    placeholder="Detailed ingredients..."
+                    placeholder="https://example.com/food.jpg"
                     className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 bg-white text-slate-900 text-xs focus:outline-none focus:border-slate-800 focus:ring-1 focus:ring-slate-800 transition"
-                  ></textarea>
+                  />
                 </div>
+              </div>
 
-                <div className="flex items-center gap-3 pt-3 border-t border-slate-100">
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="py-2.5 px-5 bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs rounded-lg transition disabled:opacity-60 cursor-pointer"
-                  >
-                    {isSubmitting ? 'Updating Product...' : 'Update Product'}
-                  </button>
-                  <Link
-                    to="/admin/products"
-                    className="py-2.5 px-4 bg-slate-100 text-slate-600 hover:bg-slate-200 font-semibold text-xs rounded-lg transition"
-                  >
-                    Cancel
-                  </Link>
-                </div>
-              </form>
-            </div>
-          </>
+              {/* Description */}
+              <div>
+                <label htmlFor="description" className="block font-semibold text-slate-700 mb-1">
+                  Item Description
+                </label>
+                <textarea
+                  id="description"
+                  name="description"
+                  rows="3"
+                  value={formData.description}
+                  onChange={handleChange}
+                  placeholder="Detailed ingredients..."
+                  className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 bg-white text-slate-900 text-xs focus:outline-none focus:border-slate-800 focus:ring-1 focus:ring-slate-800 transition"
+                ></textarea>
+              </div>
+
+              {/* Form Actions */}
+              <div className="flex items-center gap-3 pt-3 border-t border-slate-100">
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="py-2.5 px-5 bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs rounded-lg transition disabled:opacity-60 cursor-pointer"
+                >
+                  {isSubmitting ? 'Updating Product...' : 'Update Product'}
+                </button>
+                <Link
+                  to="/admin/products"
+                  className="py-2.5 px-4 bg-slate-100 text-slate-600 hover:bg-slate-200 font-semibold text-xs rounded-lg transition"
+                >
+                  Cancel
+                </Link>
+              </div>
+            </form>
+          </div>
         )}
       </main>
     </div>

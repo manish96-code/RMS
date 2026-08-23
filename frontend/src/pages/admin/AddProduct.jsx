@@ -16,6 +16,7 @@ const AddProduct = () => {
     image: '',
   })
 
+  const [fieldErrors, setFieldErrors] = useState({})
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const handleChange = (e) => {
@@ -24,11 +25,19 @@ const AddProduct = () => {
       ...prev,
       [name]: value,
     }))
+
+    if (fieldErrors[name]) {
+      setFieldErrors((prev) => ({
+        ...prev,
+        [name]: '',
+      }))
+    }
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
     setIsSubmitting(true)
+    setFieldErrors({})
 
     try {
       const response = await fetch(`${API_BASE_URL}/api/admin/dishes`, {
@@ -39,7 +48,7 @@ const AddProduct = () => {
         body: JSON.stringify({
           name: formData.name,
           category: formData.category,
-          price: parseFloat(formData.price),
+          price: formData.price !== '' ? parseFloat(formData.price) : '',
           prep_time: formData.prep_time || '15 mins',
           description: formData.description || 'Delicious fresh preparation by our top chef.',
           image: formData.image || null,
@@ -58,11 +67,20 @@ const AddProduct = () => {
           description: '',
           image: '',
         })
+        setFieldErrors({})
         setTimeout(() => {
           navigate('/admin/products')
         }, 1500)
       } else {
-        toast.error(data.message || 'Failed to add product. Please check form details.')
+        if (data.errors) {
+          const parsedErrors = {}
+          Object.keys(data.errors).forEach((key) => {
+            parsedErrors[key] = data.errors[key][0]
+          })
+          setFieldErrors(parsedErrors)
+        } else {
+          toast.error(data.message || 'Failed to add product. Please check form details.')
+        }
       }
     } catch {
       toast.error('Unable to connect to backend server.')
@@ -99,7 +117,7 @@ const AddProduct = () => {
 
         {/* Add Product Form Card */}
         <div className="max-w-2xl bg-white border border-slate-200 rounded-xl p-6 shadow-2xs">
-          <form onSubmit={handleSubmit} className="space-y-4 text-xs font-medium">
+          <form onSubmit={handleSubmit} noValidate className="space-y-4 text-xs font-medium">
             
             {/* Dish Name */}
             <div>
@@ -110,12 +128,20 @@ const AddProduct = () => {
                 type="text"
                 id="name"
                 name="name"
-                required
                 value={formData.name}
                 onChange={handleChange}
                 placeholder="e.g. Special Butter Chicken"
-                className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 bg-white text-slate-900 text-xs focus:outline-none focus:border-slate-800 focus:ring-1 focus:ring-slate-800 transition"
+                className={`w-full px-3.5 py-2.5 rounded-lg border text-xs focus:outline-none transition ${
+                  fieldErrors.name
+                    ? 'border-rose-400 bg-rose-50/20 text-rose-900 focus:border-rose-600 focus:ring-1 focus:ring-rose-600'
+                    : 'border-slate-300 bg-white text-slate-900 focus:border-slate-800 focus:ring-1 focus:ring-slate-800'
+                }`}
               />
+              {fieldErrors.name && (
+                <span className="text-rose-600 text-[11px] font-semibold mt-1 block flex items-center gap-1">
+                  ⚠️ {fieldErrors.name}
+                </span>
+              )}
             </div>
 
             {/* Category & Price */}
@@ -129,7 +155,11 @@ const AddProduct = () => {
                   name="category"
                   value={formData.category}
                   onChange={handleChange}
-                  className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 bg-white text-slate-900 text-xs focus:outline-none focus:border-slate-800 focus:ring-1 focus:ring-slate-800 transition"
+                  className={`w-full px-3.5 py-2.5 rounded-lg border text-xs focus:outline-none transition ${
+                    fieldErrors.category
+                      ? 'border-rose-400 bg-rose-50/20 text-rose-900 focus:border-rose-600 focus:ring-1 focus:ring-rose-600'
+                      : 'border-slate-300 bg-white text-slate-900 focus:border-slate-800 focus:ring-1 focus:ring-slate-800'
+                  }`}
                 >
                   <option value="Starters">Starters</option>
                   <option value="Main Course">Main Course</option>
@@ -137,6 +167,11 @@ const AddProduct = () => {
                   <option value="Desserts">Desserts</option>
                   <option value="Beverages">Beverages</option>
                 </select>
+                {fieldErrors.category && (
+                  <span className="text-rose-600 text-[11px] font-semibold mt-1 block flex items-center gap-1">
+                    ⚠️ {fieldErrors.category}
+                  </span>
+                )}
               </div>
 
               <div>
@@ -147,14 +182,22 @@ const AddProduct = () => {
                   type="number"
                   id="price"
                   name="price"
-                  required
                   min="0"
                   step="0.01"
                   value={formData.price}
                   onChange={handleChange}
                   placeholder="380"
-                  className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 bg-white text-slate-900 text-xs focus:outline-none focus:border-slate-800 focus:ring-1 focus:ring-slate-800 transition"
+                  className={`w-full px-3.5 py-2.5 rounded-lg border text-xs focus:outline-none transition ${
+                    fieldErrors.price
+                      ? 'border-rose-400 bg-rose-50/20 text-rose-900 focus:border-rose-600 focus:ring-1 focus:ring-rose-600'
+                      : 'border-slate-300 bg-white text-slate-900 focus:border-slate-800 focus:ring-1 focus:ring-slate-800'
+                  }`}
                 />
+                {fieldErrors.price && (
+                  <span className="text-rose-600 text-[11px] font-semibold mt-1 block flex items-center gap-1">
+                    ⚠️ {fieldErrors.price}
+                  </span>
+                )}
               </div>
             </div>
 
