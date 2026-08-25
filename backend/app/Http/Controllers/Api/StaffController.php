@@ -19,7 +19,7 @@ class StaffController extends Controller
                 [
                     'name' => 'Rahul Sharma',
                     'email' => 'rahul.chef@gourmethaven.com',
-                    'phone' => '+91 98765 43210',
+                    'phone' => '9876543210',
                     'role' => 'Head Chef',
                     'shift' => 'Morning',
                     'status' => 'On Duty',
@@ -30,7 +30,7 @@ class StaffController extends Controller
                 [
                     'name' => 'Priya Patel',
                     'email' => 'priya.waiter@gourmethaven.com',
-                    'phone' => '+91 98765 43211',
+                    'phone' => '9876543211',
                     'role' => 'Senior Waiter',
                     'shift' => 'Morning',
                     'status' => 'On Duty',
@@ -41,7 +41,7 @@ class StaffController extends Controller
                 [
                     'name' => 'Amit Kumar',
                     'email' => 'amit.cashier@gourmethaven.com',
-                    'phone' => '+91 98765 43212',
+                    'phone' => '9876543212',
                     'role' => 'Cashier',
                     'shift' => 'Evening',
                     'status' => 'On Duty',
@@ -52,7 +52,7 @@ class StaffController extends Controller
                 [
                     'name' => 'Neha Singh',
                     'email' => 'neha.supervisor@gourmethaven.com',
-                    'phone' => '+91 98765 43213',
+                    'phone' => '9876543213',
                     'role' => 'Floor Supervisor',
                     'shift' => 'Night',
                     'status' => 'Off Duty',
@@ -96,7 +96,7 @@ class StaffController extends Controller
         $validatedData = $request->validate([
             'name' => 'required|string|max:100',
             'email' => 'required|email|max:100|unique:users,email',
-            'phone' => 'required|string|max:20',
+            'phone' => ['required', 'string', 'regex:/^[6-9][0-9]{9}$/'],
             'role' => 'required|string|max:50',
             'shift' => 'nullable|string|max:30',
             'status' => 'nullable|string|in:On Duty,Off Duty,On Leave',
@@ -178,7 +178,7 @@ class StaffController extends Controller
         $validatedData = $request->validate([
             'name' => 'sometimes|required|string|max:100',
             'email' => 'sometimes|required|email|max:100|unique:users,email,' . $id,
-            'phone' => 'sometimes|required|string|max:20',
+            'phone' => ['sometimes', 'required', 'string', 'regex:/^[6-9][0-9]{9}$/'],
             'role' => 'sometimes|required|string|max:50',
             'shift' => 'nullable|string|max:30',
             'status' => 'nullable|string|in:On Duty,Off Duty,On Leave',
