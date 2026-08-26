@@ -39,6 +39,22 @@ class Restaurant extends Model
     }
 
     /**
+     * Relationship: Restaurant has many Categories
+     */
+    public function categories()
+    {
+        return $this->hasMany(Category::class, 'restaurant_id');
+    }
+
+    /**
+     * Relationship: Restaurant has many Menu Items
+     */
+    public function menuItems()
+    {
+        return $this->hasMany(MenuItem::class, 'restaurant_id');
+    }
+
+    /**
      * Accessor for full logo URL
      */
     public function getLogoUrlAttribute()

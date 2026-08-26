@@ -30,6 +30,13 @@ const StaffDashboard = () => {
             </div>
 
             <Link
+              to="/staff/menu"
+              className="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl transition"
+            >
+              📖 View Menu
+            </Link>
+
+            <Link
               to="/profile"
               className="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-xl transition"
             >
@@ -70,12 +77,24 @@ const StaffDashboard = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           
           <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-3">
+            <span className="text-3xl block">📖</span>
+            <h2 className="text-base font-bold text-slate-900">Digital Menu Directory</h2>
+            <p className="text-xs text-slate-500">Browse food categories, prices, ingredients and live availability status.</p>
+            <Link
+              to="/staff/menu"
+              className="inline-block px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl transition"
+            >
+              View Menu Catalog →
+            </Link>
+          </div>
+
+          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-3">
             <span className="text-3xl block">📋</span>
             <h2 className="text-base font-bold text-slate-900">Take Customer Order</h2>
             <p className="text-xs text-slate-500">Access POS terminal to create new dine-in or takeaway orders for customers.</p>
             <Link
               to="/"
-              className="inline-block px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl transition"
+              className="inline-block px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs rounded-xl transition"
             >
               Open POS Terminal →
             </Link>
@@ -91,13 +110,6 @@ const StaffDashboard = () => {
             >
               View Profile →
             </Link>
-          </div>
-
-          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs space-y-3">
-            <span className="text-3xl block">🔒</span>
-            <h2 className="text-base font-bold text-slate-900">Staff Permission Bounds</h2>
-            <p className="text-xs text-slate-500">Admin-only features (Staff Management, Financial Reports, Settings) are restricted.</p>
-            <span className="inline-block text-[11px] font-bold text-slate-400">Protected Mode Active</span>
           </div>
 
         </div>
