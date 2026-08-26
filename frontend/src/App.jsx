@@ -12,6 +12,7 @@ import Profile from './pages/Profile'
 import AdminDashboard from './pages/admin/Dashboard'
 import RestaurantSettings from './pages/admin/restaurant/RestaurantSettings'
 import MenuManagement from './pages/admin/menu/MenuManagement'
+import TableManagement from './pages/admin/tables/TableManagement'
 import StaffManagement from './pages/admin/StaffManagement'
 import AddProduct from './pages/admin/AddProduct'
 import ManageProducts from './pages/admin/ManageProducts'
@@ -23,6 +24,7 @@ import Transactions from './pages/admin/Transactions'
 // Staff Pages
 import StaffDashboard from './pages/staff/Dashboard'
 import StaffMenu from './pages/staff/menu/StaffMenu'
+import StaffTables from './pages/staff/tables/StaffTables'
 
 // General Pages
 import Home from './pages/Home'
@@ -186,12 +188,12 @@ const AppContent = () => {
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/admin/restaurant" element={<RestaurantSettings />} />
             <Route path="/admin/menu" element={<MenuManagement />} />
+            <Route path="/admin/tables" element={<TableManagement />} />
             <Route path="/admin/staff" element={<StaffManagement />} />
             <Route path="/admin/add-product" element={<AddProduct />} />
             <Route path="/admin/products" element={<ManageProducts />} />
             <Route path="/admin/view-product/:id" element={<ViewProduct />} />
             <Route path="/admin/edit-product/:id" element={<EditProduct />} />
-            <Route path="/admin/tables" element={<ManageTables />} />
             <Route path="/admin/transactions" element={<Transactions />} />
           </Route>
 
@@ -200,6 +202,7 @@ const AppContent = () => {
             <Route path="/staff" element={<Navigate to="/staff/dashboard" replace />} />
             <Route path="/staff/dashboard" element={<StaffDashboard />} />
             <Route path="/staff/menu" element={<StaffMenu />} />
+            <Route path="/staff/tables" element={<StaffTables />} />
           </Route>
 
           {/* Fallback Route */}

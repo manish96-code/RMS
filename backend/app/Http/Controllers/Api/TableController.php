@@ -3,178 +3,200 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\RestaurantTable;
+use App\Http\Requests\StoreTableRequest;
+use App\Http\Requests\UpdateTableRequest;
+use App\Http\Requests\UpdateTableStatusRequest;
+use App\Http\Resources\TableResource;
+use App\Models\Restaurant;
+use App\Models\Table;
 use Illuminate\Http\Request;
 
 class TableController extends Controller
 {
     /**
-     * Seed initial sample tables if database is empty
+     * Helper to get authenticated user's restaurant ID
      */
-    private function seedInitialTablesIfEmpty()
+    private function getRestaurantId(Request $request)
     {
-        if (RestaurantTable::count() === 0) {
-            $sampleTables = [
-                ['table_no' => 'T-01', 'capacity' => 2, 'status' => 'Occupied', 'guest_count' => 2, 'order_id' => '#204', 'time_seated' => '25 mins ago'],
-                ['table_no' => 'T-02', 'capacity' => 4, 'status' => 'Available', 'guest_count' => 0, 'order_id' => null, 'time_seated' => null],
-                ['table_no' => 'T-03', 'capacity' => 4, 'status' => 'Occupied', 'guest_count' => 3, 'order_id' => '#205', 'time_seated' => '40 mins ago'],
-                ['table_no' => 'T-04', 'capacity' => 6, 'status' => 'Reserved', 'guest_count' => 0, 'order_id' => null, 'time_seated' => 'In 15 mins'],
-                ['table_no' => 'T-05', 'capacity' => 2, 'status' => 'Available', 'guest_count' => 0, 'order_id' => null, 'time_seated' => null],
-                ['table_no' => 'T-06', 'capacity' => 8, 'status' => 'Occupied', 'guest_count' => 7, 'order_id' => '#208', 'time_seated' => '10 mins ago'],
-                ['table_no' => 'T-07', 'capacity' => 4, 'status' => 'Cleaning', 'guest_count' => 0, 'order_id' => null, 'time_seated' => null],
-                ['table_no' => 'T-08', 'capacity' => 2, 'status' => 'Available', 'guest_count' => 0, 'order_id' => null, 'time_seated' => null],
-            ];
-
-            foreach ($sampleTables as $tableData) {
-                RestaurantTable::create($tableData);
-            }
+        $user = $request->user();
+        if ($user && $user->restaurant) {
+            return $user->restaurant->id;
         }
+
+        // For Staff users, link to the system's restaurant
+        if ($user && $user->isStaff()) {
+            $restaurant = Restaurant::first();
+            return $restaurant ? $restaurant->id : null;
+        }
+
+        return null;
     }
 
     /**
      * GET /api/tables
      */
-    public function index()
+    public function index(Request $request)
     {
-        $this->seedInitialTablesIfEmpty();
+        $restaurantId = $this->getRestaurantId($request);
 
-        $tables = RestaurantTable::orderBy('id', 'asc')->get();
+        if (!$restaurantId) {
+            return response()->json([
+                'success' => true,
+                'message' => 'No restaurant configured yet',
+                'data' => [],
+            ], 200);
+        }
+
+        $tables = Table::where('restaurant_id', $restaurantId)
+            ->orderBy('id', 'asc')
+            ->get();
 
         return response()->json([
-            'status' => 'success',
-            'message' => 'Restaurant tables fetched successfully',
-            'count' => $tables->count(),
-            'tables' => $tables,
-            'data' => $tables,
-        ], 200)->header('Access-Control-Allow-Origin', '*')
-            ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE')
-            ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+            'success' => true,
+            'message' => 'Tables fetched successfully',
+            'data' => TableResource::collection($tables),
+        ], 200);
     }
 
     /**
-     * POST /api/admin/tables or /api/tables
-     * Add table API for Admin
+     * POST /api/tables
      */
-    public function store(Request $request)
+    public function store(StoreTableRequest $request)
     {
-        $validatedData = $request->validate([
-            'table_no' => 'required|string|max:20|unique:restaurant_tables,table_no',
-            'capacity' => 'required|integer|min:1|max:50',
-            'status' => 'nullable|string|in:Available,Occupied,Reserved,Cleaning',
-            'guest_count' => 'nullable|integer|min:0',
-        ]);
+        $restaurantId = $this->getRestaurantId($request);
 
-        $table = RestaurantTable::create([
-            'table_no' => strtoupper($validatedData['table_no']),
-            'capacity' => $validatedData['capacity'],
-            'status' => $validatedData['status'] ?? 'Available',
-            'guest_count' => $validatedData['guest_count'] ?? 0,
+        if (!$restaurantId) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Please set up your restaurant before creating tables.',
+            ], 422);
+        }
+
+        $table = Table::create([
+            'restaurant_id' => $restaurantId,
+            'table_number' => $request->table_number,
+            'capacity' => $request->capacity,
+            'status' => $request->status ?? 'available',
         ]);
 
         return response()->json([
-            'status' => 'success',
-            'message' => "Table {$table->table_no} added successfully!",
-            'data' => $table,
-            'table' => $table,
-        ], 201)->header('Access-Control-Allow-Origin', '*')
-            ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE')
-            ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    }
-
-    /**
-     * Alias for store
-     */
-    public function createTable(Request $request)
-    {
-        return $this->store($request);
+            'success' => true,
+            'message' => 'Table created successfully',
+            'data' => new TableResource($table),
+        ], 201);
     }
 
     /**
      * GET /api/tables/{id}
      */
-    public function show($id)
+    public function show(Request $request, $id)
     {
-        $table = RestaurantTable::find($id);
+        $restaurantId = $this->getRestaurantId($request);
+
+        $table = Table::where('restaurant_id', $restaurantId)
+            ->where('id', $id)
+            ->first();
 
         if (!$table) {
             return response()->json([
-                'status' => 'error',
+                'success' => false,
                 'message' => 'Table not found',
-            ], 404)->header('Access-Control-Allow-Origin', '*')
-                ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE')
-                ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+            ], 404);
         }
 
         return response()->json([
-            'status' => 'success',
-            'data' => $table,
-            'table' => $table,
-        ], 200)->header('Access-Control-Allow-Origin', '*')
-            ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE')
-            ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+            'success' => true,
+            'message' => 'Table retrieved successfully',
+            'data' => new TableResource($table),
+        ], 200);
     }
 
     /**
      * PUT /api/tables/{id}
      */
-    public function update(Request $request, $id)
+    public function update(UpdateTableRequest $request, $id)
     {
-        $table = RestaurantTable::find($id);
+        $restaurantId = $this->getRestaurantId($request);
+
+        $table = Table::where('restaurant_id', $restaurantId)
+            ->where('id', $id)
+            ->first();
 
         if (!$table) {
             return response()->json([
-                'status' => 'error',
+                'success' => false,
                 'message' => 'Table not found',
-            ], 404)->header('Access-Control-Allow-Origin', '*')
-                ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE')
-                ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+            ], 404);
         }
 
-        $validatedData = $request->validate([
-            'table_no' => 'sometimes|required|string|max:20|unique:restaurant_tables,table_no,' . $id,
-            'capacity' => 'sometimes|required|integer|min:1|max:50',
-            'status' => 'nullable|string|in:Available,Occupied,Reserved,Cleaning',
-            'guest_count' => 'nullable|integer|min:0',
-            'order_id' => 'nullable|string',
-            'time_seated' => 'nullable|string',
-        ]);
-
-        $table->update($validatedData);
+        // Only allow updating table_number and capacity from general update endpoint
+        $table->update($request->only(['table_number', 'capacity']));
 
         return response()->json([
-            'status' => 'success',
+            'success' => true,
             'message' => 'Table updated successfully',
-            'data' => $table,
-            'table' => $table,
-        ], 200)->header('Access-Control-Allow-Origin', '*')
-            ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE')
-            ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+            'data' => new TableResource($table->fresh()),
+        ], 200);
     }
 
     /**
      * DELETE /api/tables/{id}
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        $table = RestaurantTable::find($id);
+        $restaurantId = $this->getRestaurantId($request);
+
+        $table = Table::where('restaurant_id', $restaurantId)
+            ->where('id', $id)
+            ->first();
 
         if (!$table) {
             return response()->json([
-                'status' => 'error',
+                'success' => false,
                 'message' => 'Table not found',
-            ], 404)->header('Access-Control-Allow-Origin', '*')
-                ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE')
-                ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+            ], 404);
+        }
+
+        // Prevent deleting an occupied table (Requirement 7 & 13)
+        if ($table->status === 'occupied') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Occupied table cannot be deleted.',
+            ], 422);
         }
 
         $table->delete();
 
         return response()->json([
-            'status' => 'success',
+            'success' => true,
             'message' => 'Table deleted successfully',
-            'id' => $id,
-        ], 200)->header('Access-Control-Allow-Origin', '*')
-            ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE')
-            ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+        ], 200);
+    }
+
+    /**
+     * PATCH /api/tables/{id}/status
+     */
+    public function updateStatus(UpdateTableStatusRequest $request, $id)
+    {
+        $restaurantId = $this->getRestaurantId($request);
+
+        $table = Table::where('restaurant_id', $restaurantId)
+            ->where('id', $id)
+            ->first();
+
+        if (!$table) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Table not found',
+            ], 404);
+        }
+
+        $table->update(['status' => $request->status]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Table status updated successfully',
+            'data' => new TableResource($table->fresh()),
+        ], 200);
     }
 }

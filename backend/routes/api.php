@@ -25,11 +25,9 @@ Route::get('/restaurant-home', [HomeController::class, 'index']);
 // Authentication API
 Route::post('/login', [AuthController::class, 'login']);
 
-// Legacy endpoints for POS displays
+// Legacy public endpoints
 Route::get('/dishes', [DishController::class, 'index']);
 Route::get('/dishes/{id}', [DishController::class, 'show']);
-Route::get('/tables', [TableController::class, 'index']);
-Route::get('/tables/{id}', [TableController::class, 'show']);
 
 /*
 |--------------------------------------------------------------------------
@@ -42,11 +40,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/profile', [ProfileController::class, 'updateProfile']);
     Route::put('/change-password', [ProfileController::class, 'changePassword']);
 
-    // Read-only Category & Menu Item APIs (Accessible by Admin & Staff)
+    // Category & Menu Item Read APIs (Module 3)
     Route::get('/categories', [CategoryController::class, 'index']);
     Route::get('/categories/{id}', [CategoryController::class, 'show']);
     Route::get('/menu-items', [MenuItemController::class, 'index']);
     Route::get('/menu-items/{id}', [MenuItemController::class, 'show']);
+
+    // Table Management Read APIs (Module 4 - Accessible by Admin & Staff)
+    Route::get('/tables', [TableController::class, 'index']);
+    Route::get('/tables/{id}', [TableController::class, 'show']);
 
     /*
     |--------------------------------------------------------------------------
@@ -54,12 +56,18 @@ Route::middleware('auth:sanctum')->group(function () {
     |--------------------------------------------------------------------------
     */
     Route::middleware('admin')->group(function () {
-        // Category Management APIs
+        // Table Management APIs (Module 4)
+        Route::post('/tables', [TableController::class, 'store']);
+        Route::put('/tables/{id}', [TableController::class, 'update']);
+        Route::delete('/tables/{id}', [TableController::class, 'destroy']);
+        Route::patch('/tables/{id}/status', [TableController::class, 'updateStatus']);
+
+        // Category Management APIs (Module 3)
         Route::post('/categories', [CategoryController::class, 'store']);
         Route::put('/categories/{id}', [CategoryController::class, 'update']);
         Route::delete('/categories/{id}', [CategoryController::class, 'destroy']);
 
-        // Menu Item Management APIs
+        // Menu Item Management APIs (Module 3)
         Route::post('/menu-items', [MenuItemController::class, 'store']);
         Route::put('/menu-items/{id}', [MenuItemController::class, 'update']);
         Route::delete('/menu-items/{id}', [MenuItemController::class, 'destroy']);
@@ -84,10 +92,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/admin/dishes', [DishController::class, 'store']);
         Route::put('/dishes/{id}', [DishController::class, 'update']);
         Route::delete('/dishes/{id}', [DishController::class, 'destroy']);
-        Route::post('/tables', [TableController::class, 'store']);
-        Route::post('/admin/tables', [TableController::class, 'store']);
-        Route::put('/tables/{id}', [TableController::class, 'update']);
-        Route::delete('/tables/{id}', [TableController::class, 'destroy']);
         Route::get('/admin/dashboard', [AdminController::class, 'dashboard']);
     });
 });
