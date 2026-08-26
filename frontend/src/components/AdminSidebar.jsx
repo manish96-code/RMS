@@ -6,11 +6,11 @@ const AdminSidebar = ({ dishesCount = 0 }) => {
 
   const navItems = [
     { path: '/admin', label: 'Dashboard Overview', icon: '📊' },
-    { path: '/admin/add-product', label: 'Add New Product', icon: '➕' },
+    { path: '/admin/restaurant', label: 'Restaurant Setup', icon: '🏪' },
+    { path: '/admin/staff', label: 'Staff Directory', icon: '👥' },
     { path: '/admin/products', label: 'Manage Products', icon: '🍕', badge: dishesCount },
+    { path: '/admin/add-product', label: 'Add New Product', icon: '➕' },
     { path: '/admin/tables', label: 'Manage Tables', icon: '🪑' },
-    { path: '/admin/staff', label: 'Staff Duty Roster', icon: '👥' },
-    { path: '/admin/add-staff', label: 'Add Staff Member', icon: '📝' },
     { path: '/admin/transactions', label: 'Transactions Log', icon: '💳' },
   ]
 
@@ -78,11 +78,11 @@ const AdminSidebar = ({ dishesCount = 0 }) => {
       <div className="pt-4 border-t border-slate-800 flex items-center justify-between px-2">
         <div className="flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center text-white text-xs font-bold">
-            M
+            A
           </div>
           <div>
-            <div className="text-xs font-semibold text-white">Manish Kumar</div>
-            <div className="text-[10px] text-slate-400">Super Administrator</div>
+            <div className="text-xs font-semibold text-white">Restaurant Admin</div>
+            <div className="text-[10px] text-slate-400">Owner Portal</div>
           </div>
         </div>
         <span className="w-2 h-2 rounded-full bg-emerald-500" title="Online"></span>

@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\DishController;
 use App\Http\Controllers\Api\HomeController;
 use App\Http\Controllers\Api\ProfileController;
+use App\Http\Controllers\Api\RestaurantController;
 use App\Http\Controllers\Api\StaffController;
 use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\TableController;
@@ -45,6 +46,12 @@ Route::middleware('auth:sanctum')->group(function () {
     |--------------------------------------------------------------------------
     */
     Route::middleware('admin')->group(function () {
+        // Restaurant Setup & Profile APIs (Module 2)
+        Route::get('/restaurant', [RestaurantController::class, 'show']);
+        Route::post('/restaurant', [RestaurantController::class, 'store']);
+        Route::put('/restaurant', [RestaurantController::class, 'update']);
+        Route::post('/restaurant/logo', [RestaurantController::class, 'uploadLogo']);
+
         // Staff Management APIs
         Route::get('/staff', [StaffController::class, 'index']);
         Route::post('/staff', [StaffController::class, 'store']);

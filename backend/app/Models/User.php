@@ -42,6 +42,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Relationship: Admin hasOne Restaurant
+     */
+    public function restaurant()
+    {
+        return $this->hasOne(Restaurant::class, 'user_id');
+    }
+
+    /**
      * Mobile accessor fallback for phone attribute compatibility
      */
     public function getMobileAttribute($value)

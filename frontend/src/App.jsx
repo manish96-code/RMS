@@ -10,6 +10,7 @@ import Profile from './pages/Profile'
 
 // Admin Pages
 import AdminDashboard from './pages/admin/Dashboard'
+import RestaurantSettings from './pages/admin/restaurant/RestaurantSettings'
 import StaffManagement from './pages/admin/StaffManagement'
 import AddProduct from './pages/admin/AddProduct'
 import ManageProducts from './pages/admin/ManageProducts'
@@ -181,6 +182,7 @@ const AppContent = () => {
           <Route element={<AdminRoute />}>
             <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
+            <Route path="/admin/restaurant" element={<RestaurantSettings />} />
             <Route path="/admin/staff" element={<StaffManagement />} />
             <Route path="/admin/add-product" element={<AddProduct />} />
             <Route path="/admin/products" element={<ManageProducts />} />
