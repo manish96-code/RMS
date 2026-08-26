@@ -2,27 +2,28 @@
 
 namespace App\Models;
 
-use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable;
 
     protected $table = 'users';
 
     protected $fillable = [
         'name',
         'email',
+        'mobile',
         'phone',
+        'password',
         'role',
-        'shift',
         'status',
         'is_active',
+        'shift',
         'orders_handled',
-        'password',
     ];
 
     protected $hidden = [
@@ -38,5 +39,37 @@ class User extends Authenticatable
             'is_active' => 'boolean',
             'orders_handled' => 'integer',
         ];
+    }
+
+    /**
+     * Mobile accessor fallback for phone attribute compatibility
+     */
+    public function getMobileAttribute($value)
+    {
+        return $value ?? $this->attributes['phone'] ?? '';
+    }
+
+    /**
+     * Check if user is admin
+     */
+    public function isAdmin(): bool
+    {
+        return strtolower($this->role) === 'admin';
+    }
+
+    /**
+     * Check if user is staff
+     */
+    public function isStaff(): bool
+    {
+        return strtolower($this->role) === 'staff';
+    }
+
+    /**
+     * Check if user account is active
+     */
+    public function isActive(): bool
+    {
+        return strtolower($this->status) === 'active' && $this->is_active !== false;
     }
 }

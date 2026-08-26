@@ -15,14 +15,15 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
-            $table->string('phone')->nullable();
-            $table->string('role')->nullable()->default('Waiter');
-            $table->string('shift')->nullable()->default('Morning');
-            $table->string('status')->nullable()->default('On Duty');
+            $table->string('mobile')->nullable();
+            $table->string('phone')->nullable(); // For backwards compatibility
+            $table->string('password');
+            $table->enum('role', ['admin', 'staff'])->default('staff');
+            $table->enum('status', ['active', 'inactive'])->default('active');
             $table->boolean('is_active')->default(true);
+            $table->string('shift')->nullable()->default('Morning');
             $table->integer('orders_handled')->default(0);
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('password')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

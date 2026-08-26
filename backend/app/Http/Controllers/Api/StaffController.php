@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreStaffRequest;
+use App\Http\Requests\UpdateStaffRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -10,128 +12,47 @@ use Illuminate\Support\Facades\Hash;
 class StaffController extends Controller
 {
     /**
-     * Seed initial sample staff users if database has no staff members
-     */
-    private function seedInitialStaffIfEmpty()
-    {
-        if (User::whereNotNull('role')->count() === 0) {
-            $sampleStaff = [
-                [
-                    'name' => 'Rahul Sharma',
-                    'email' => 'rahul.chef@gourmethaven.com',
-                    'phone' => '9876543210',
-                    'role' => 'Head Chef',
-                    'shift' => 'Morning',
-                    'status' => 'On Duty',
-                    'is_active' => true,
-                    'orders_handled' => 24,
-                    'password' => Hash::make('password123'),
-                ],
-                [
-                    'name' => 'Priya Patel',
-                    'email' => 'priya.waiter@gourmethaven.com',
-                    'phone' => '9876543211',
-                    'role' => 'Senior Waiter',
-                    'shift' => 'Morning',
-                    'status' => 'On Duty',
-                    'is_active' => true,
-                    'orders_handled' => 18,
-                    'password' => Hash::make('password123'),
-                ],
-                [
-                    'name' => 'Amit Kumar',
-                    'email' => 'amit.cashier@gourmethaven.com',
-                    'phone' => '9876543212',
-                    'role' => 'Cashier',
-                    'shift' => 'Evening',
-                    'status' => 'On Duty',
-                    'is_active' => true,
-                    'orders_handled' => 38,
-                    'password' => Hash::make('password123'),
-                ],
-                [
-                    'name' => 'Neha Singh',
-                    'email' => 'neha.supervisor@gourmethaven.com',
-                    'phone' => '9876543213',
-                    'role' => 'Floor Supervisor',
-                    'shift' => 'Night',
-                    'status' => 'Off Duty',
-                    'is_active' => true,
-                    'orders_handled' => 0,
-                    'password' => Hash::make('password123'),
-                ]
-            ];
-
-            foreach ($sampleStaff as $staffData) {
-                User::create($staffData);
-            }
-        }
-    }
-
-    /**
      * GET /api/staff
      */
     public function index()
     {
-        $this->seedInitialStaffIfEmpty();
-
-        $staffList = User::whereNotNull('role')->orderBy('id', 'asc')->get();
+        $staffList = User::where('role', 'staff')
+            ->orderBy('id', 'asc')
+            ->get();
 
         return response()->json([
-            'status' => 'success',
-            'message' => 'Staff members fetched successfully from users table',
-            'count' => $staffList->count(),
-            'staff' => $staffList,
-            'data' => $staffList,
-        ], 200)->header('Access-Control-Allow-Origin', '*')
-            ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE')
-            ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+            'success' => true,
+            'message' => 'Staff members retrieved successfully',
+            'data' => [
+                'staff' => $staffList,
+            ],
+        ], 200);
     }
 
     /**
-     * POST /api/admin/staff or /api/staff
+     * POST /api/staff
      */
-    public function store(Request $request)
+    public function store(StoreStaffRequest $request)
     {
-        $validatedData = $request->validate([
-            'name' => 'required|string|max:100',
-            'email' => 'required|email|max:100|unique:users,email',
-            'phone' => ['required', 'string', 'regex:/^[6-9][0-9]{9}$/'],
-            'role' => 'required|string|max:50',
-            'shift' => 'nullable|string|max:30',
-            'status' => 'nullable|string|in:On Duty,Off Duty,On Leave',
-            'is_active' => 'nullable|boolean',
-            'password' => 'nullable|string|min:6',
-        ]);
-
-        $user = User::create([
-            'name' => $validatedData['name'],
-            'email' => strtolower($validatedData['email']),
-            'phone' => $validatedData['phone'],
-            'role' => $validatedData['role'],
-            'shift' => $validatedData['shift'] ?? 'Morning',
-            'status' => $validatedData['status'] ?? 'On Duty',
-            'is_active' => $validatedData['is_active'] ?? true,
-            'orders_handled' => 0,
-            'password' => Hash::make($validatedData['password'] ?? 'password123'),
+        $staff = User::create([
+            'name' => $request->name,
+            'email' => strtolower($request->email),
+            'mobile' => $request->mobile,
+            'phone' => $request->mobile,
+            'password' => Hash::make($request->password),
+            'role' => 'staff', // Automatically enforced as staff
+            'status' => 'active',
+            'is_active' => true,
+            'shift' => $request->shift ?? 'Morning',
         ]);
 
         return response()->json([
-            'status' => 'success',
-            'message' => "Staff user '{$user->name}' registered successfully!",
-            'data' => $user,
-            'staff' => $user,
-        ], 201)->header('Access-Control-Allow-Origin', '*')
-            ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE')
-            ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    }
-
-    /**
-     * Alias for store
-     */
-    public function createStaff(Request $request)
-    {
-        return $this->store($request);
+            'success' => true,
+            'message' => 'Staff created successfully',
+            'data' => [
+                'staff' => $staff,
+            ],
+        ], 201);
     }
 
     /**
@@ -139,63 +60,71 @@ class StaffController extends Controller
      */
     public function show($id)
     {
-        $user = User::find($id);
+        $staff = User::where('id', $id)->first();
 
-        if (!$user) {
+        if (!$staff) {
             return response()->json([
-                'status' => 'error',
-                'message' => 'Staff user not found',
-            ], 404)->header('Access-Control-Allow-Origin', '*')
-                ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE')
-                ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+                'success' => false,
+                'message' => 'Staff not found',
+            ], 404);
         }
 
         return response()->json([
-            'status' => 'success',
-            'data' => $user,
-            'staff' => $user,
-        ], 200)->header('Access-Control-Allow-Origin', '*')
-            ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE')
-            ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+            'success' => true,
+            'message' => 'Staff retrieved successfully',
+            'data' => [
+                'staff' => $staff,
+            ],
+        ], 200);
     }
 
     /**
      * PUT /api/staff/{id}
      */
-    public function update(Request $request, $id)
+    public function update(UpdateStaffRequest $request, $id)
     {
-        $user = User::find($id);
+        $staff = User::where('id', $id)->first();
 
-        if (!$user) {
+        if (!$staff) {
             return response()->json([
-                'status' => 'error',
-                'message' => 'Staff user not found',
-            ], 404)->header('Access-Control-Allow-Origin', '*')
-                ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE')
-                ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+                'success' => false,
+                'message' => 'Staff not found',
+            ], 404);
         }
 
-        $validatedData = $request->validate([
-            'name' => 'sometimes|required|string|max:100',
-            'email' => 'sometimes|required|email|max:100|unique:users,email,' . $id,
-            'phone' => ['sometimes', 'required', 'string', 'regex:/^[6-9][0-9]{9}$/'],
-            'role' => 'sometimes|required|string|max:50',
-            'shift' => 'nullable|string|max:30',
-            'status' => 'nullable|string|in:On Duty,Off Duty,On Leave',
-            'is_active' => 'nullable|boolean',
-            'orders_handled' => 'nullable|integer|min:0',
-        ]);
+        $dataToUpdate = [];
 
-        $user->update($validatedData);
+        if ($request->has('name')) {
+            $dataToUpdate['name'] = $request->name;
+        }
+
+        if ($request->has('email')) {
+            $dataToUpdate['email'] = strtolower($request->email);
+        }
+
+        if ($request->has('mobile')) {
+            $dataToUpdate['mobile'] = $request->mobile;
+            $dataToUpdate['phone'] = $request->mobile;
+        }
+
+        if ($request->has('status')) {
+            $dataToUpdate['status'] = $request->status;
+            $dataToUpdate['is_active'] = strtolower($request->status) === 'active';
+        }
+
+        if ($request->has('shift')) {
+            $dataToUpdate['shift'] = $request->shift;
+        }
+
+        $staff->update($dataToUpdate);
 
         return response()->json([
-            'status' => 'success',
-            'message' => 'Staff user details updated successfully',
-            'data' => $user,
-            'staff' => $user,
-        ], 200)->header('Access-Control-Allow-Origin', '*')
-            ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE')
-            ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+            'success' => true,
+            'message' => 'Staff updated successfully',
+            'data' => [
+                'staff' => $staff->fresh(),
+            ],
+        ], 200);
     }
 
     /**
@@ -203,25 +132,49 @@ class StaffController extends Controller
      */
     public function destroy($id)
     {
-        $user = User::find($id);
+        $staff = User::where('id', $id)->first();
 
-        if (!$user) {
+        if (!$staff) {
             return response()->json([
-                'status' => 'error',
-                'message' => 'Staff user not found',
-            ], 404)->header('Access-Control-Allow-Origin', '*')
-                ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE')
-                ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+                'success' => false,
+                'message' => 'Staff not found',
+            ], 404);
         }
 
-        $user->delete();
+        $staff->delete();
 
         return response()->json([
-            'status' => 'success',
-            'message' => 'Staff user removed successfully',
-            'id' => $id,
-        ], 200)->header('Access-Control-Allow-Origin', '*')
-            ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE')
-            ->header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+            'success' => true,
+            'message' => 'Staff deleted successfully',
+        ], 200);
+    }
+
+    /**
+     * PUT /api/staff/{id}/toggle-status
+     */
+    public function toggleStatus($id)
+    {
+        $staff = User::where('id', $id)->first();
+
+        if (!$staff) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Staff not found',
+            ], 404);
+        }
+
+        $nextStatus = strtolower($staff->status) === 'active' ? 'inactive' : 'active';
+        $staff->update([
+            'status' => $nextStatus,
+            'is_active' => $nextStatus === 'active',
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => "Staff status changed to {$nextStatus}",
+            'data' => [
+                'staff' => $staff->fresh(),
+            ],
+        ], 200);
     }
 }

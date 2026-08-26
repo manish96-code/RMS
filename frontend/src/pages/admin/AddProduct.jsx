@@ -120,13 +120,13 @@ const AddProduct = () => {
 
   return (
     <div className="flex min-h-screen bg-slate-50 text-slate-800 antialiased font-sans text-left">
-      
+
       {/* Shared Admin Sidebar */}
       <AdminSidebar />
 
       {/* Main Admin Content (Light Theme) */}
       <main className="flex-1 min-h-screen overflow-y-auto p-6 lg:p-10 space-y-8">
-        
+
         {/* Page Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-200">
           <div>
@@ -155,12 +155,12 @@ const AddProduct = () => {
 
         {/* 2-Column Main Workspace */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          
+
           {/* Left Column: Clean Light Form Card (7 Cols) */}
           <div className="lg:col-span-7 bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-xs space-y-6">
-            
+
             <form onSubmit={handleSubmit} noValidate className="space-y-5 text-xs font-medium">
-              
+
               {/* Form Section Header */}
               <div className="flex items-center gap-3 pb-3 border-b border-slate-100">
                 <div className="w-8 h-8 rounded-lg bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-700 font-bold text-sm">
@@ -184,11 +184,10 @@ const AddProduct = () => {
                   value={formData.name}
                   onChange={handleChange}
                   placeholder="e.g. Special Butter Chicken"
-                  className={`w-full px-4 py-3 rounded-xl border text-xs focus:outline-none transition ${
-                    fieldErrors.name
+                  className={`w-full px-4 py-3 rounded-xl border text-xs focus:outline-none transition ${fieldErrors.name
                       ? 'border-rose-400 bg-rose-50/30 text-rose-900 focus:border-rose-600 focus:ring-1 focus:ring-rose-600'
                       : 'border-slate-300 bg-white text-slate-900 focus:border-slate-800 focus:ring-1 focus:ring-slate-800'
-                  }`}
+                    }`}
                 />
                 {fieldErrors.name && (
                   <span className="text-rose-600 text-[11px] font-semibold mt-1.5 flex items-center gap-1">
@@ -208,11 +207,10 @@ const AddProduct = () => {
                     name="category"
                     value={formData.category}
                     onChange={handleChange}
-                    className={`w-full px-4 py-3 rounded-xl border text-xs focus:outline-none transition cursor-pointer ${
-                      fieldErrors.category
+                    className={`w-full px-4 py-3 rounded-xl border text-xs focus:outline-none transition cursor-pointer ${fieldErrors.category
                         ? 'border-rose-400 bg-rose-50/30 text-rose-900 focus:border-rose-600'
                         : 'border-slate-300 bg-white text-slate-900 focus:border-slate-800'
-                    }`}
+                      }`}
                   >
                     <option value="Starters">Starters</option>
                     <option value="Main Course">Main Course</option>
@@ -240,11 +238,10 @@ const AddProduct = () => {
                     value={formData.price}
                     onChange={handleChange}
                     placeholder="e.g. 380"
-                    className={`w-full px-4 py-3 rounded-xl border text-xs focus:outline-none transition ${
-                      fieldErrors.price
+                    className={`w-full px-4 py-3 rounded-xl border text-xs focus:outline-none transition ${fieldErrors.price
                         ? 'border-rose-400 bg-rose-50/30 text-rose-900 focus:border-rose-600'
                         : 'border-slate-300 bg-white text-slate-900 focus:border-slate-800'
-                    }`}
+                      }`}
                   />
                   {fieldErrors.price && (
                     <span className="text-rose-600 text-[11px] font-semibold mt-1.5 flex items-center gap-1">
@@ -298,11 +295,10 @@ const AddProduct = () => {
                       key={sample.name}
                       type="button"
                       onClick={() => handleSelectSampleImage(sample.url)}
-                      className={`px-3 py-1.5 rounded-lg text-[11px] font-semibold border transition cursor-pointer flex items-center gap-1.5 ${
-                        formData.image === sample.url
+                      className={`px-3 py-1.5 rounded-lg text-[11px] font-semibold border transition cursor-pointer flex items-center gap-1.5 ${formData.image === sample.url
                           ? 'bg-slate-900 text-white border-slate-900 font-bold'
                           : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
-                      }`}
+                        }`}
                     >
                       <span>📷</span> {sample.name}
                     </button>
@@ -359,7 +355,7 @@ const AddProduct = () => {
 
           {/* Right Column: Live Menu Card Interactive Preview (Light Mode, 5 Cols) */}
           <div className="lg:col-span-5 space-y-4 sticky top-6">
-            
+
             <div className="flex items-center justify-between">
               <h2 className="text-xs uppercase font-extrabold tracking-wider text-slate-500 flex items-center gap-2">
                 <span>👁️</span> Live Menu Card Preview
@@ -371,7 +367,7 @@ const AddProduct = () => {
 
             {/* Light Mode POS / Menu Card */}
             <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-md transition-all duration-300">
-              
+
               {/* Card Image Cover */}
               <div className="relative h-48 bg-slate-100 overflow-hidden flex items-center justify-center border-b border-slate-200">
                 {formData.image ? (

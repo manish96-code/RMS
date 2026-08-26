@@ -1,60 +1,75 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\HomeController;
-use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\AdminController;
+use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\DishController;
-use App\Http\Controllers\Api\TableController;
+use App\Http\Controllers\Api\HomeController;
+use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\StaffController;
+use App\Http\Controllers\Api\StudentController;
+use App\Http\Controllers\Api\TableController;
+use Illuminate\Support\Facades\Route;
 
+/*
+|--------------------------------------------------------------------------
+| Public Routes
+|--------------------------------------------------------------------------
+*/
 Route::get('/', [HomeController::class, 'index']);
 Route::get('/home', [HomeController::class, 'index']);
 Route::get('/restaurant-home', [HomeController::class, 'index']);
-Route::get('/admin/dashboard', [AdminController::class, 'dashboard']);
 
-// Dish Management APIs for Admin & App
+// Authentication API
+Route::post('/login', [AuthController::class, 'login']);
+
+// General Menu & Seating APIs (For POS Displays)
 Route::get('/dishes', [DishController::class, 'index']);
-Route::post('/dishes', [DishController::class, 'store']);
-Route::post('/admin/dishes', [DishController::class, 'store']);
-Route::post('/create-dish', [DishController::class, 'store']);
 Route::get('/dishes/{id}', [DishController::class, 'show']);
-Route::put('/dishes/{id}', [DishController::class, 'update']);
-Route::delete('/dishes/{id}', [DishController::class, 'destroy']);
-
-// Table Management APIs for Admin & App
 Route::get('/tables', [TableController::class, 'index']);
-Route::post('/tables', [TableController::class, 'store']);
-Route::post('/admin/tables', [TableController::class, 'store']);
-Route::post('/create-table', [TableController::class, 'store']);
 Route::get('/tables/{id}', [TableController::class, 'show']);
-Route::put('/tables/{id}', [TableController::class, 'update']);
-Route::delete('/tables/{id}', [TableController::class, 'destroy']);
 
-// Staff Management APIs for Admin & App
-Route::get('/staff', [StaffController::class, 'index']);
-Route::post('/staff', [StaffController::class, 'store']);
-Route::post('/admin/staff', [StaffController::class, 'store']);
-Route::post('/create-staff', [StaffController::class, 'store']);
-Route::get('/staff/{id}', [StaffController::class, 'show']);
-Route::put('/staff/{id}', [StaffController::class, 'update']);
-Route::delete('/staff/{id}', [StaffController::class, 'destroy']);
+/*
+|--------------------------------------------------------------------------
+| Authenticated User Routes (Sanctum Protected)
+|--------------------------------------------------------------------------
+*/
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/user', [AuthController::class, 'user']);
+    Route::put('/profile', [ProfileController::class, 'updateProfile']);
+    Route::put('/change-password', [ProfileController::class, 'changePassword']);
 
-Route::get('/stdcall', [StudentController::class, 'index'])->name('stdcall');
-Route::get('/students', [StudentController::class, 'index']);
-Route::post('/create-student', [StudentController::class, 'createStudent']);
-Route::post('/students', [StudentController::class, 'createStudent']);
-Route::get('/students/{id}', [StudentController::class, 'showStudent']);
-Route::put('/students/{id}', [StudentController::class, 'updateStudent']);
-Route::post('/students/{id}', [StudentController::class, 'updateStudent']);
-Route::put('/update-student/{id}', [StudentController::class, 'updateStudent']);
-Route::post('/update-student/{id}', [StudentController::class, 'updateStudent']);
-Route::delete('/students/{id}', [StudentController::class, 'deleteStudent']);
-Route::delete('/delete-student/{id}', [StudentController::class, 'deleteStudent']);
+    /*
+    |--------------------------------------------------------------------------
+    | Admin Only Routes (Role Authorized)
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware('admin')->group(function () {
+        // Staff Management APIs
+        Route::get('/staff', [StaffController::class, 'index']);
+        Route::post('/staff', [StaffController::class, 'store']);
+        Route::get('/staff/{id}', [StaffController::class, 'show']);
+        Route::put('/staff/{id}', [StaffController::class, 'update']);
+        Route::delete('/staff/{id}', [StaffController::class, 'destroy']);
+        Route::put('/staff/{id}/toggle-status', [StaffController::class, 'toggleStatus']);
 
+        // Admin Dish Management
+        Route::post('/dishes', [DishController::class, 'store']);
+        Route::post('/admin/dishes', [DishController::class, 'store']);
+        Route::put('/dishes/{id}', [DishController::class, 'update']);
+        Route::delete('/dishes/{id}', [DishController::class, 'destroy']);
 
+        // Admin Table Management
+        Route::post('/tables', [TableController::class, 'store']);
+        Route::post('/admin/tables', [TableController::class, 'store']);
+        Route::put('/tables/{id}', [TableController::class, 'update']);
+        Route::delete('/tables/{id}', [TableController::class, 'destroy']);
 
-// Respond to preflight requests for any path under /api
+        Route::get('/admin/dashboard', [AdminController::class, 'dashboard']);
+    });
+});
+
+// Options Preflight handling for CORS
 Route::options('{any}', function () {
     return response()->json([], 200)->header('Access-Control-Allow-Origin', '*')
         ->header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE')
