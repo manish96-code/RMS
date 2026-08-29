@@ -73,8 +73,10 @@ class OrderController extends Controller
             $query->where('table_id', $request->table_id);
         }
 
-        // Optional filter: staff_id
-        if ($request->has('staff_id') && !empty($request->staff_id)) {
+        // Staff default filter: show orders created by that staff member unless all=true or staff_id specified
+        if ($request->user() && $request->user()->isStaff() && !$request->has('staff_id') && !$request->has('all')) {
+            $query->where('staff_id', $request->user()->id);
+        } elseif ($request->has('staff_id') && !empty($request->staff_id)) {
             $query->where('staff_id', $request->staff_id);
         }
 
