@@ -163,24 +163,27 @@ const StaffManagement = () => {
     <div className="flex min-h-screen bg-slate-50 text-slate-800 font-sans antialiased text-left">
       <AdminSidebar />
 
-      {/* Create Staff Modal */}
+      {/* Create Staff Right-Side Slide-Over Drawer Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full border border-slate-200 shadow-xl p-6 space-y-4 text-left">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex justify-end">
+          <div className="bg-white h-full max-w-md w-full border-l border-slate-200 shadow-2xl flex flex-col justify-between text-left overflow-y-auto">
+            
+            {/* Header */}
+            <div className="p-6 border-b border-slate-100 flex items-center justify-between sticky top-0 bg-white z-10">
               <div>
-                <h3 className="text-base font-bold text-slate-900">Add New Staff Member</h3>
-                <p className="text-xs text-slate-500">Automatically assigned role: Staff</p>
+                <h3 className="text-base font-extrabold text-slate-900">Add New Staff Member</h3>
+                <p className="text-xs text-slate-500 mt-0.5">Automatically assigned role: Staff</p>
               </div>
               <button
                 onClick={() => setShowAddModal(false)}
-                className="text-slate-400 hover:text-slate-600 font-bold p-1 cursor-pointer text-sm"
+                className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center cursor-pointer transition"
               >
                 ✕
               </button>
             </div>
 
-            <form onSubmit={handleCreateStaffSubmit} noValidate className="space-y-3.5 text-xs font-medium">
+            {/* Form */}
+            <form onSubmit={handleCreateStaffSubmit} noValidate className="p-6 space-y-4 text-xs font-medium flex-1">
               <div>
                 <label className="block font-semibold text-slate-700 mb-1">Full Name *</label>
                 <input
@@ -254,46 +257,51 @@ const StaffManagement = () => {
                   />
                 </div>
               </div>
-
-              <div className="flex gap-2 pt-3 border-t border-slate-100">
-                <button
-                  type="submit"
-                  disabled={isCreating}
-                  className="flex-1 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl transition cursor-pointer disabled:opacity-60"
-                >
-                  {isCreating ? 'Creating Staff...' : 'Create Staff Member'}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setShowAddModal(false)}
-                  className="px-4 py-2.5 bg-slate-100 text-slate-600 font-semibold rounded-xl hover:bg-slate-200"
-                >
-                  Cancel
-                </button>
-              </div>
             </form>
+
+            {/* Footer */}
+            <div className="p-6 border-t border-slate-100 bg-slate-50 flex items-center gap-3 sticky bottom-0">
+              <button
+                type="button"
+                onClick={() => setShowAddModal(false)}
+                className="px-4 py-3 bg-white border border-slate-200 text-slate-700 font-semibold rounded-xl text-xs hover:bg-slate-100 transition cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleCreateStaffSubmit}
+                disabled={isCreating}
+                className="flex-1 py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-xs transition cursor-pointer disabled:opacity-60 shadow-xs"
+              >
+                {isCreating ? 'Creating Staff...' : 'Create Staff Member'}
+              </button>
+            </div>
           </div>
         </div>
       )}
 
-      {/* Edit Staff Modal */}
+      {/* Edit Staff Right-Side Slide-Over Drawer Modal */}
       {showEditModal && editingStaff && (
-        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full border border-slate-200 shadow-xl p-6 space-y-4 text-left">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex justify-end">
+          <div className="bg-white h-full max-w-md w-full border-l border-slate-200 shadow-2xl flex flex-col justify-between text-left overflow-y-auto">
+            
+            {/* Header */}
+            <div className="p-6 border-b border-slate-100 flex items-center justify-between sticky top-0 bg-white z-10">
               <div>
-                <h3 className="text-base font-bold text-slate-900">Update Staff Details</h3>
-                <p className="text-xs text-slate-500">ID: #{editingStaff.id}</p>
+                <h3 className="text-base font-extrabold text-slate-900">Update Staff Details</h3>
+                <p className="text-xs text-slate-500 mt-0.5">Staff ID: #{editingStaff.id}</p>
               </div>
               <button
                 onClick={() => setShowEditModal(false)}
-                className="text-slate-400 hover:text-slate-600 font-bold p-1 cursor-pointer text-sm"
+                className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center cursor-pointer transition"
               >
                 ✕
               </button>
             </div>
 
-            <form onSubmit={handleUpdateStaffSubmit} noValidate className="space-y-3.5 text-xs font-medium">
+            {/* Form */}
+            <form onSubmit={handleUpdateStaffSubmit} noValidate className="p-6 space-y-4 text-xs font-medium flex-1">
               <div>
                 <label className="block font-semibold text-slate-700 mb-1">Full Name *</label>
                 <input
@@ -341,30 +349,32 @@ const StaffManagement = () => {
                 <select
                   value={editingStaff.status}
                   onChange={(e) => setEditingStaff({ ...editingStaff, status: e.target.value })}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs focus:outline-none"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs focus:outline-none bg-white"
                 >
                   <option value="active">Active</option>
                   <option value="inactive">Inactive</option>
                 </select>
               </div>
-
-              <div className="flex gap-2 pt-3 border-t border-slate-100">
-                <button
-                  type="submit"
-                  disabled={isUpdating}
-                  className="flex-1 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl transition cursor-pointer disabled:opacity-60"
-                >
-                  {isUpdating ? 'Saving Changes...' : 'Update Staff'}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setShowEditModal(false)}
-                  className="px-4 py-2.5 bg-slate-100 text-slate-600 font-semibold rounded-xl hover:bg-slate-200"
-                >
-                  Cancel
-                </button>
-              </div>
             </form>
+
+            {/* Footer */}
+            <div className="p-6 border-t border-slate-100 bg-slate-50 flex items-center gap-3 sticky bottom-0">
+              <button
+                type="button"
+                onClick={() => setShowEditModal(false)}
+                className="px-4 py-3 bg-white border border-slate-200 text-slate-700 font-semibold rounded-xl text-xs hover:bg-slate-100 transition cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleUpdateStaffSubmit}
+                disabled={isUpdating}
+                className="flex-1 py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-xs transition cursor-pointer disabled:opacity-60 shadow-xs"
+              >
+                {isUpdating ? 'Saving Changes...' : 'Update Staff'}
+              </button>
+            </div>
           </div>
         </div>
       )}

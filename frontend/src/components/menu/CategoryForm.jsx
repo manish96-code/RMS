@@ -10,27 +10,28 @@ const CategoryForm = ({
   isSubmitting = false,
 }) => {
   return (
-    <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl max-w-md w-full border border-slate-200 shadow-xl p-6 space-y-4 text-left">
+    <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex justify-end">
+      {/* Right-Side Stretchable Slide-Over Drawer */}
+      <div className="bg-white h-full max-w-md w-full border-l border-slate-200 shadow-2xl flex flex-col justify-between text-left overflow-y-auto">
         
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+        {/* Drawer Header */}
+        <div className="p-6 border-b border-slate-100 flex items-center justify-between sticky top-0 bg-white z-10">
           <div>
-            <h3 className="text-base font-bold text-slate-900">
+            <h3 className="text-base font-extrabold text-slate-900">
               {isEditing ? 'Edit Food Category' : 'Add New Category'}
             </h3>
-            <p className="text-xs text-slate-500">Group related dishes on your restaurant menu</p>
+            <p className="text-xs text-slate-500 mt-0.5">Group related dishes on your restaurant menu</p>
           </div>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-slate-600 font-bold p-1 cursor-pointer text-sm"
+            className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center cursor-pointer transition"
           >
             ✕
           </button>
         </div>
 
-        {/* Form Body */}
-        <form onSubmit={onSubmit} noValidate className="space-y-4 text-xs font-medium">
+        {/* Drawer Form Body */}
+        <form onSubmit={onSubmit} noValidate className="p-6 space-y-5 text-xs font-medium flex-1">
           
           {/* Category Name */}
           <div>
@@ -65,11 +66,11 @@ const CategoryForm = ({
             <textarea
               id="cat_desc"
               name="description"
-              rows="3"
+              rows="4"
               value={categoryData.description || ''}
               onChange={onChange}
               placeholder="Brief description of items under this category..."
-              className="w-full px-3.5 py-2 rounded-xl border border-slate-300 bg-white text-slate-900 text-xs focus:outline-none focus:border-slate-800 transition"
+              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-900 text-xs focus:outline-none focus:border-slate-800 transition"
             />
           </div>
 
@@ -90,25 +91,26 @@ const CategoryForm = ({
             </select>
           </div>
 
-          {/* Controls */}
-          <div className="flex gap-2 pt-3 border-t border-slate-100">
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="flex-1 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl transition cursor-pointer disabled:opacity-60"
-            >
-              {isSubmitting ? 'Saving Category...' : isEditing ? 'Update Category' : 'Save Category'}
-            </button>
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2.5 bg-slate-100 text-slate-600 font-semibold rounded-xl hover:bg-slate-200 cursor-pointer"
-            >
-              Cancel
-            </button>
-          </div>
-
         </form>
+
+        {/* Drawer Action Controls Footer */}
+        <div className="p-6 border-t border-slate-100 bg-slate-50 flex items-center gap-3 sticky bottom-0">
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-4 py-3 bg-white border border-slate-200 text-slate-700 font-semibold rounded-xl text-xs hover:bg-slate-100 transition cursor-pointer"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={onSubmit}
+            disabled={isSubmitting}
+            className="flex-1 py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-xs transition cursor-pointer disabled:opacity-60 shadow-xs"
+          >
+            {isSubmitting ? 'Saving Category...' : isEditing ? 'Update Category' : 'Save Category'}
+          </button>
+        </div>
 
       </div>
     </div>

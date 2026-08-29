@@ -23,27 +23,28 @@ const MenuItemForm = ({
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-      <div className="bg-white rounded-2xl max-w-lg w-full border border-slate-200 shadow-xl p-6 space-y-4 text-left my-8">
+    <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex justify-end">
+      {/* Right-Side Stretchable Slide-Over Drawer Modal */}
+      <div className="bg-white h-full max-w-lg w-full border-l border-slate-200 shadow-2xl flex flex-col justify-between text-left overflow-y-auto">
         
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+        {/* Drawer Header */}
+        <div className="p-6 border-b border-slate-100 flex items-center justify-between sticky top-0 bg-white z-10">
           <div>
-            <h3 className="text-base font-bold text-slate-900">
+            <h3 className="text-base font-extrabold text-slate-900">
               {isEditing ? 'Edit Menu Food Item' : 'Add New Food Item'}
             </h3>
-            <p className="text-xs text-slate-500">Configure pricing, category and food item details</p>
+            <p className="text-xs text-slate-500 mt-0.5">Configure pricing, category and food item details</p>
           </div>
           <button
             onClick={onClose}
-            className="text-slate-400 hover:text-slate-600 font-bold p-1 cursor-pointer text-sm"
+            className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center cursor-pointer transition"
           >
             ✕
           </button>
         </div>
 
-        {/* Form Body */}
-        <form onSubmit={onSubmit} noValidate className="space-y-4 text-xs font-medium">
+        {/* Drawer Form Body */}
+        <form onSubmit={onSubmit} noValidate className="p-6 space-y-5 text-xs font-medium flex-1">
           
           {/* Food Item Name */}
           <div>
@@ -137,23 +138,23 @@ const MenuItemForm = ({
             <textarea
               id="food_desc"
               name="description"
-              rows="2"
+              rows="3"
               value={itemData.description || ''}
               onChange={onChange}
               placeholder="Ingredients, preparation highlights or portion details..."
-              className="w-full px-3.5 py-2 rounded-xl border border-slate-300 bg-white text-slate-900 text-xs focus:outline-none focus:border-slate-800 transition"
+              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-white text-slate-900 text-xs focus:outline-none focus:border-slate-800 transition"
             />
           </div>
 
           {/* Food Image Upload & Preview */}
           <div>
             <label className="block font-semibold text-slate-700 mb-1">Food Image (Optional)</label>
-            <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-xl border border-slate-200 bg-slate-50 overflow-hidden flex items-center justify-center shrink-0">
+            <div className="flex items-center gap-4 p-3 bg-slate-50 border border-slate-200 rounded-xl">
+              <div className="w-16 h-16 rounded-xl border border-slate-200 bg-white overflow-hidden flex items-center justify-center shrink-0 shadow-2xs">
                 {imagePreview ? (
                   <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
                 ) : (
-                  <span className="text-xl">🍲</span>
+                  <span className="text-2xl">🍲</span>
                 )}
               </div>
 
@@ -162,9 +163,9 @@ const MenuItemForm = ({
                   type="file"
                   accept="image/jpeg,image/png,image/jpg,image/webp"
                   onChange={handleLocalImage}
-                  className="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200 cursor-pointer"
+                  className="w-full text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-slate-200 file:text-slate-700 hover:file:bg-slate-300 cursor-pointer"
                 />
-                <p className="text-[10px] text-slate-400 mt-1">JPG, JPEG, PNG or WEBP. Max 2MB.</p>
+                <p className="text-[10px] text-slate-400 mt-1">JPG, PNG or WEBP. Max 2MB.</p>
               </div>
             </div>
             {fieldErrors.image && (
@@ -194,25 +195,26 @@ const MenuItemForm = ({
             </label>
           </div>
 
-          {/* Controls */}
-          <div className="flex gap-2 pt-3 border-t border-slate-100">
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="flex-1 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl transition cursor-pointer disabled:opacity-60"
-            >
-              {isSubmitting ? 'Saving Food Item...' : isEditing ? 'Update Food Item' : 'Save Food Item'}
-            </button>
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2.5 bg-slate-100 text-slate-600 font-semibold rounded-xl hover:bg-slate-200 cursor-pointer"
-            >
-              Cancel
-            </button>
-          </div>
-
         </form>
+
+        {/* Drawer Action Controls Footer */}
+        <div className="p-6 border-t border-slate-100 bg-slate-50 flex items-center gap-3 sticky bottom-0">
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-4 py-3 bg-white border border-slate-200 text-slate-700 font-semibold rounded-xl text-xs hover:bg-slate-100 transition cursor-pointer"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={onSubmit}
+            disabled={isSubmitting}
+            className="flex-1 py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-xs transition cursor-pointer disabled:opacity-60 shadow-xs"
+          >
+            {isSubmitting ? 'Saving Food Item...' : isEditing ? 'Update Food Item' : 'Save Food Item'}
+          </button>
+        </div>
 
       </div>
     </div>
