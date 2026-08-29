@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\DishController;
 use App\Http\Controllers\Api\HomeController;
 use App\Http\Controllers\Api\MenuItemController;
+use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\RestaurantController;
 use App\Http\Controllers\Api\StaffController;
@@ -40,13 +41,20 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/profile', [ProfileController::class, 'updateProfile']);
     Route::put('/change-password', [ProfileController::class, 'changePassword']);
 
+    // Order Management APIs (Module 5 - Accessible by Admin & Staff)
+    Route::get('/orders', [OrderController::class, 'index']);
+    Route::get('/orders/{id}', [OrderController::class, 'show']);
+    Route::post('/orders', [OrderController::class, 'store']);
+    Route::patch('/orders/{id}/status', [OrderController::class, 'updateStatus']);
+    Route::post('/orders/{id}/cancel', [OrderController::class, 'cancel']);
+
     // Category & Menu Item Read APIs (Module 3)
     Route::get('/categories', [CategoryController::class, 'index']);
     Route::get('/categories/{id}', [CategoryController::class, 'show']);
     Route::get('/menu-items', [MenuItemController::class, 'index']);
     Route::get('/menu-items/{id}', [MenuItemController::class, 'show']);
 
-    // Table Management Read APIs (Module 4 - Accessible by Admin & Staff)
+    // Table Management Read APIs (Module 4)
     Route::get('/tables', [TableController::class, 'index']);
     Route::get('/tables/{id}', [TableController::class, 'show']);
 

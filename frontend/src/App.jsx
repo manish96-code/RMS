@@ -13,6 +13,8 @@ import AdminDashboard from './pages/admin/Dashboard'
 import RestaurantSettings from './pages/admin/restaurant/RestaurantSettings'
 import MenuManagement from './pages/admin/menu/MenuManagement'
 import TableManagement from './pages/admin/tables/TableManagement'
+import AdminOrders from './pages/admin/orders/Orders'
+import AdminOrderDetails from './pages/admin/orders/OrderDetails'
 import StaffManagement from './pages/admin/StaffManagement'
 import AddProduct from './pages/admin/AddProduct'
 import ManageProducts from './pages/admin/ManageProducts'
@@ -25,6 +27,9 @@ import Transactions from './pages/admin/Transactions'
 import StaffDashboard from './pages/staff/Dashboard'
 import StaffMenu from './pages/staff/menu/StaffMenu'
 import StaffTables from './pages/staff/tables/StaffTables'
+import CreateOrder from './pages/staff/orders/CreateOrder'
+import StaffOrders from './pages/staff/orders/Orders'
+import StaffOrderDetails from './pages/staff/orders/OrderDetails'
 
 // General Pages
 import Home from './pages/Home'
@@ -189,6 +194,8 @@ const AppContent = () => {
             <Route path="/admin/restaurant" element={<RestaurantSettings />} />
             <Route path="/admin/menu" element={<MenuManagement />} />
             <Route path="/admin/tables" element={<TableManagement />} />
+            <Route path="/admin/orders" element={<AdminOrders />} />
+            <Route path="/admin/orders/:id" element={<AdminOrderDetails />} />
             <Route path="/admin/staff" element={<StaffManagement />} />
             <Route path="/admin/add-product" element={<AddProduct />} />
             <Route path="/admin/products" element={<ManageProducts />} />
@@ -203,6 +210,9 @@ const AppContent = () => {
             <Route path="/staff/dashboard" element={<StaffDashboard />} />
             <Route path="/staff/menu" element={<StaffMenu />} />
             <Route path="/staff/tables" element={<StaffTables />} />
+            <Route path="/staff/orders" element={<StaffOrders />} />
+            <Route path="/staff/orders/create" element={<CreateOrder />} />
+            <Route path="/staff/orders/:id" element={<StaffOrderDetails />} />
           </Route>
 
           {/* Fallback Route */}

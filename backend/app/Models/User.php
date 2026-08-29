@@ -50,6 +50,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Relationship: Staff/User hasMany Orders
+     */
+    public function orders()
+    {
+        return $this->hasMany(Order::class, 'staff_id');
+    }
+
+    /**
      * Mobile accessor fallback for phone attribute compatibility
      */
     public function getMobileAttribute($value)

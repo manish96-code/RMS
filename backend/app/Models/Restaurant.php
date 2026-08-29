@@ -63,6 +63,14 @@ class Restaurant extends Model
     }
 
     /**
+     * Relationship: Restaurant has many Orders
+     */
+    public function orders()
+    {
+        return $this->hasMany(Order::class, 'restaurant_id');
+    }
+
+    /**
      * Accessor for full logo URL
      */
     public function getLogoUrlAttribute()

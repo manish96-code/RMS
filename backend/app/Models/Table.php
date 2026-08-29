@@ -29,4 +29,12 @@ class Table extends Model
     {
         return $this->belongsTo(Restaurant::class, 'restaurant_id');
     }
+
+    /**
+     * Relationship: Table has many Orders
+     */
+    public function orders()
+    {
+        return $this->hasMany(Order::class, 'table_id');
+    }
 }
