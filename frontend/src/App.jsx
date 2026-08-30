@@ -11,6 +11,7 @@ import Profile from './pages/Profile'
 // Admin Pages
 import AdminDashboard from './pages/admin/Dashboard'
 import RestaurantSettings from './pages/admin/restaurant/RestaurantSettings'
+import CategoryManagement from './pages/admin/categories/CategoryManagement'
 import MenuManagement from './pages/admin/menu/MenuManagement'
 import TableManagement from './pages/admin/tables/TableManagement'
 import AdminOrders from './pages/admin/orders/Orders'
@@ -192,6 +193,7 @@ const AppContent = () => {
             <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
             <Route path="/admin/dashboard" element={<AdminDashboard />} />
             <Route path="/admin/restaurant" element={<RestaurantSettings />} />
+            <Route path="/admin/categories" element={<CategoryManagement />} />
             <Route path="/admin/menu" element={<MenuManagement />} />
             <Route path="/admin/tables" element={<TableManagement />} />
             <Route path="/admin/orders" element={<AdminOrders />} />
