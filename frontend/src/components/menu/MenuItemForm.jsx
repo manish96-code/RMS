@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import ResizableDrawer from '../common/ResizableDrawer'
 
 const MenuItemForm = ({
   itemData,
@@ -23,9 +24,8 @@ const MenuItemForm = ({
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex justify-end">
-      {/* Right-Side Stretchable Slide-Over Drawer Modal */}
-      <div className="bg-white h-full max-w-lg w-full border-l border-slate-200 shadow-2xl flex flex-col justify-between text-left overflow-y-auto">
+    <ResizableDrawer onClose={onClose} initialWidth={520} storageKey="menu_item_drawer_width">
+      {/* Drawer Header */}
         
         {/* Drawer Header */}
         <div className="p-6 border-b border-slate-100 flex items-center justify-between sticky top-0 bg-white z-10">
@@ -215,9 +215,7 @@ const MenuItemForm = ({
             {isSubmitting ? 'Saving Food Item...' : isEditing ? 'Update Food Item' : 'Save Food Item'}
           </button>
         </div>
-
-      </div>
-    </div>
+    </ResizableDrawer>
   )
 }
 

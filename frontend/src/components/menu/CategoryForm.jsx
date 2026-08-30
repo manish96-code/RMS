@@ -1,4 +1,5 @@
 import React from 'react'
+import ResizableDrawer from '../common/ResizableDrawer'
 
 const CategoryForm = ({
   categoryData,
@@ -10,9 +11,7 @@ const CategoryForm = ({
   isSubmitting = false,
 }) => {
   return (
-    <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex justify-end">
-      {/* Right-Side Stretchable Slide-Over Drawer */}
-      <div className="bg-white h-full max-w-md w-full border-l border-slate-200 shadow-2xl flex flex-col justify-between text-left overflow-y-auto">
+    <ResizableDrawer onClose={onClose} initialWidth={460} storageKey="category_drawer_width">
         
         {/* Drawer Header */}
         <div className="p-6 border-b border-slate-100 flex items-center justify-between sticky top-0 bg-white z-10">
@@ -111,9 +110,7 @@ const CategoryForm = ({
             {isSubmitting ? 'Saving Category...' : isEditing ? 'Update Category' : 'Save Category'}
           </button>
         </div>
-
-      </div>
-    </div>
+    </ResizableDrawer>
   )
 }
 

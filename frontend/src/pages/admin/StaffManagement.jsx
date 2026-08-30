@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { toast } from 'react-hot-toast'
 import AdminSidebar from '../../components/AdminSidebar'
+import ResizableDrawer from '../../components/common/ResizableDrawer'
 import { authService } from '../../services/authService'
 
 const StaffManagement = () => {
@@ -165,218 +166,242 @@ const StaffManagement = () => {
 
       {/* Create Staff Right-Side Slide-Over Drawer Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex justify-end">
-          <div className="bg-white h-full max-w-md w-full border-l border-slate-200 shadow-2xl flex flex-col justify-between text-left overflow-y-auto">
-            
-            {/* Header */}
-            <div className="p-6 border-b border-slate-100 flex items-center justify-between sticky top-0 bg-white z-10">
-              <div>
-                <h3 className="text-base font-extrabold text-slate-900">Add New Staff Member</h3>
-                <p className="text-xs text-slate-500 mt-0.5">Automatically assigned role: Staff</p>
-              </div>
-              <button
-                onClick={() => setShowAddModal(false)}
-                className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center cursor-pointer transition"
-              >
-                ✕
-              </button>
+        <ResizableDrawer onClose={() => setShowAddModal(false)} initialWidth={460} storageKey="staff_drawer_width">
+          {/* Header */}
+          <div className="p-6 border-b border-slate-100 flex items-center justify-between sticky top-0 bg-white z-10">
+            <div>
+              <h3 className="text-base font-extrabold text-slate-900">Add New Staff Member</h3>
+              <p className="text-xs text-slate-500 mt-0.5">Automatically assigned role: Staff</p>
             </div>
-
-            {/* Form */}
-            <form onSubmit={handleCreateStaffSubmit} noValidate className="p-6 space-y-4 text-xs font-medium flex-1">
-              <div>
-                <label className="block font-semibold text-slate-700 mb-1">Full Name *</label>
-                <input
-                  type="text"
-                  required
-                  value={newStaff.name}
-                  onChange={(e) => setNewStaff({ ...newStaff, name: e.target.value })}
-                  placeholder="e.g. Rahul Kumar"
-                  className={`w-full px-3.5 py-2.5 rounded-xl border text-xs focus:outline-none ${
-                    addErrors.name ? 'border-rose-400 bg-rose-50/30' : 'border-slate-300'
-                  }`}
-                />
-                {addErrors.name && <span className="text-rose-600 text-[11px] mt-1 block">⚠️ {addErrors.name}</span>}
-              </div>
-
-              <div>
-                <label className="block font-semibold text-slate-700 mb-1">Email Address *</label>
-                <input
-                  type="email"
-                  required
-                  value={newStaff.email}
-                  onChange={(e) => setNewStaff({ ...newStaff, email: e.target.value })}
-                  placeholder="rahul@example.com"
-                  className={`w-full px-3.5 py-2.5 rounded-xl border text-xs focus:outline-none ${
-                    addErrors.email ? 'border-rose-400 bg-rose-50/30' : 'border-slate-300'
-                  }`}
-                />
-                {addErrors.email && <span className="text-rose-600 text-[11px] mt-1 block">⚠️ {addErrors.email}</span>}
-              </div>
-
-              <div>
-                <label className="block font-semibold text-slate-700 mb-1">Mobile Number *</label>
-                <input
-                  type="tel"
-                  required
-                  value={newStaff.mobile}
-                  onChange={(e) => setNewStaff({ ...newStaff, mobile: e.target.value })}
-                  placeholder="9876543210"
-                  className={`w-full px-3.5 py-2.5 rounded-xl border text-xs focus:outline-none ${
-                    addErrors.mobile ? 'border-rose-400 bg-rose-50/30' : 'border-slate-300'
-                  }`}
-                />
-                {addErrors.mobile && <span className="text-rose-600 text-[11px] mt-1 block">⚠️ {addErrors.mobile}</span>}
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-semibold text-slate-700 mb-1">Password *</label>
-                  <input
-                    type="password"
-                    required
-                    value={newStaff.password}
-                    onChange={(e) => setNewStaff({ ...newStaff, password: e.target.value })}
-                    placeholder="••••••••"
-                    className={`w-full px-3.5 py-2.5 rounded-xl border text-xs focus:outline-none ${
-                      addErrors.password ? 'border-rose-400 bg-rose-50/30' : 'border-slate-300'
-                    }`}
-                  />
-                  {addErrors.password && <span className="text-rose-600 text-[11px] mt-1 block">⚠️ {addErrors.password}</span>}
-                </div>
-
-                <div>
-                  <label className="block font-semibold text-slate-700 mb-1">Confirm Password *</label>
-                  <input
-                    type="password"
-                    required
-                    value={newStaff.password_confirmation}
-                    onChange={(e) => setNewStaff({ ...newStaff, password_confirmation: e.target.value })}
-                    placeholder="••••••••"
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs focus:outline-none"
-                  />
-                </div>
-              </div>
-            </form>
-
-            {/* Footer */}
-            <div className="p-6 border-t border-slate-100 bg-slate-50 flex items-center gap-3 sticky bottom-0">
-              <button
-                type="button"
-                onClick={() => setShowAddModal(false)}
-                className="px-4 py-3 bg-white border border-slate-200 text-slate-700 font-semibold rounded-xl text-xs hover:bg-slate-100 transition cursor-pointer"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={handleCreateStaffSubmit}
-                disabled={isCreating}
-                className="flex-1 py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-xs transition cursor-pointer disabled:opacity-60 shadow-xs"
-              >
-                {isCreating ? 'Creating Staff...' : 'Create Staff Member'}
-              </button>
-            </div>
+            <button
+              onClick={() => setShowAddModal(false)}
+              className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center cursor-pointer transition"
+            >
+              ✕
+            </button>
           </div>
-        </div>
+
+          {/* Form */}
+          <form onSubmit={handleCreateStaffSubmit} noValidate className="p-6 space-y-4 text-xs font-medium flex-1">
+            <div>
+              <label className="block font-semibold text-slate-700 mb-1">Full Name *</label>
+              <input
+                type="text"
+                required
+                value={newStaff.name}
+                onChange={(e) => setNewStaff({ ...newStaff, name: e.target.value })}
+                placeholder="e.g. Rahul Kumar"
+                className={`w-full px-3.5 py-2.5 rounded-xl border text-xs focus:outline-none ${
+                  addErrors.name ? 'border-rose-400 bg-rose-50/30' : 'border-slate-300'
+                }`}
+              />
+              {addErrors.name && <span className="text-rose-600 text-[11px] mt-1 block">⚠️ {addErrors.name}</span>}
+            </div>
+
+            <div>
+              <label className="block font-semibold text-slate-700 mb-1">Email Address *</label>
+              <input
+                type="email"
+                required
+                value={newStaff.email}
+                onChange={(e) => setNewStaff({ ...newStaff, email: e.target.value })}
+                placeholder="e.g. rahul@restaurant.com"
+                className={`w-full px-3.5 py-2.5 rounded-xl border text-xs focus:outline-none ${
+                  addErrors.email ? 'border-rose-400 bg-rose-50/30' : 'border-slate-300'
+                }`}
+              />
+              {addErrors.email && <span className="text-rose-600 text-[11px] mt-1 block">⚠️ {addErrors.email}</span>}
+            </div>
+
+            <div>
+              <label className="block font-semibold text-slate-700 mb-1">Mobile Number</label>
+              <input
+                type="tel"
+                value={newStaff.mobile}
+                onChange={(e) => setNewStaff({ ...newStaff, mobile: e.target.value })}
+                placeholder="e.g. 9876543210"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs focus:outline-none"
+              />
+            </div>
+
+            <div>
+              <label className="block font-semibold text-slate-700 mb-1">Password *</label>
+              <input
+                type="password"
+                required
+                value={newStaff.password}
+                onChange={(e) => setNewStaff({ ...newStaff, password: e.target.value })}
+                placeholder="At least 6 characters"
+                className={`w-full px-3.5 py-2.5 rounded-xl border text-xs focus:outline-none ${
+                  addErrors.password ? 'border-rose-400 bg-rose-50/30' : 'border-slate-300'
+                }`}
+              />
+              {addErrors.password && <span className="text-rose-600 text-[11px] mt-1 block">⚠️ {addErrors.password}</span>}
+            </div>
+
+            <div>
+              <label className="block font-semibold text-slate-700 mb-1">Confirm Password *</label>
+              <input
+                type="password"
+                required
+                value={newStaff.password_confirmation}
+                onChange={(e) => setNewStaff({ ...newStaff, password_confirmation: e.target.value })}
+                placeholder="Re-enter password"
+                className={`w-full px-3.5 py-2.5 rounded-xl border text-xs focus:outline-none ${
+                  addErrors.password_confirmation ? 'border-rose-400 bg-rose-50/30' : 'border-slate-300'
+                }`}
+              />
+              {addErrors.password_confirmation && (
+                <span className="text-rose-600 text-[11px] mt-1 block">⚠️ {addErrors.password_confirmation}</span>
+              )}
+            </div>
+          </form>
+
+          {/* Footer */}
+          <div className="p-6 border-t border-slate-100 bg-slate-50 flex items-center gap-3 sticky bottom-0">
+            <button
+              type="button"
+              onClick={() => setShowAddModal(false)}
+              className="px-4 py-3 bg-white border border-slate-200 text-slate-700 font-semibold rounded-xl text-xs hover:bg-slate-100 transition cursor-pointer"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={handleCreateStaffSubmit}
+              disabled={isCreating}
+              className="flex-1 py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-xs transition cursor-pointer disabled:opacity-60 shadow-xs"
+            >
+              {isCreating ? 'Creating Staff...' : 'Create Staff Member'}
+            </button>
+          </div>
+        </ResizableDrawer>
       )}
 
       {/* Edit Staff Right-Side Slide-Over Drawer Modal */}
       {showEditModal && editingStaff && (
-        <div className="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-xs flex justify-end">
-          <div className="bg-white h-full max-w-md w-full border-l border-slate-200 shadow-2xl flex flex-col justify-between text-left overflow-y-auto">
-            
-            {/* Header */}
-            <div className="p-6 border-b border-slate-100 flex items-center justify-between sticky top-0 bg-white z-10">
-              <div>
-                <h3 className="text-base font-extrabold text-slate-900">Update Staff Details</h3>
-                <p className="text-xs text-slate-500 mt-0.5">Staff ID: #{editingStaff.id}</p>
-              </div>
-              <button
-                onClick={() => setShowEditModal(false)}
-                className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center cursor-pointer transition"
-              >
-                ✕
-              </button>
+        <ResizableDrawer onClose={() => setShowEditModal(false)} initialWidth={460} storageKey="staff_drawer_width">
+          {/* Header */}
+          <div className="p-6 border-b border-slate-100 flex items-center justify-between sticky top-0 bg-white z-10">
+            <div>
+              <h3 className="text-base font-extrabold text-slate-900">Update Staff Details</h3>
+              <p className="text-xs text-slate-500 mt-0.5">Staff ID: #{editingStaff.id}</p>
             </div>
-
-            {/* Form */}
-            <form onSubmit={handleUpdateStaffSubmit} noValidate className="p-6 space-y-4 text-xs font-medium flex-1">
-              <div>
-                <label className="block font-semibold text-slate-700 mb-1">Full Name *</label>
-                <input
-                  type="text"
-                  required
-                  value={editingStaff.name}
-                  onChange={(e) => setEditingStaff({ ...editingStaff, name: e.target.value })}
-                  className={`w-full px-3.5 py-2.5 rounded-xl border text-xs focus:outline-none ${
-                    editErrors.name ? 'border-rose-400 bg-rose-50/30' : 'border-slate-300'
-                  }`}
-                />
-                {editErrors.name && <span className="text-rose-600 text-[11px] mt-1 block">⚠️ {editErrors.name}</span>}
-              </div>
-
-              <div>
-                <label className="block font-semibold text-slate-700 mb-1">Email Address *</label>
-                <input
-                  type="email"
-                  required
-                  value={editingStaff.email}
-                  onChange={(e) => setEditingStaff({ ...editingStaff, email: e.target.value })}
-                  className={`w-full px-3.5 py-2.5 rounded-xl border text-xs focus:outline-none ${
-                    editErrors.email ? 'border-rose-400 bg-rose-50/30' : 'border-slate-300'
-                  }`}
-                />
-                {editErrors.email && <span className="text-rose-600 text-[11px] mt-1 block">⚠️ {editErrors.email}</span>}
-              </div>
-
-              <div>
-                <label className="block font-semibold text-slate-700 mb-1">Mobile Number *</label>
-                <input
-                  type="tel"
-                  required
-                  value={editingStaff.mobile}
-                  onChange={(e) => setEditingStaff({ ...editingStaff, mobile: e.target.value })}
-                  className={`w-full px-3.5 py-2.5 rounded-xl border text-xs focus:outline-none ${
-                    editErrors.mobile ? 'border-rose-400 bg-rose-50/30' : 'border-slate-300'
-                  }`}
-                />
-                {editErrors.mobile && <span className="text-rose-600 text-[11px] mt-1 block">⚠️ {editErrors.mobile}</span>}
-              </div>
-
-              <div>
-                <label className="block font-semibold text-slate-700 mb-1">Account Status</label>
-                <select
-                  value={editingStaff.status}
-                  onChange={(e) => setEditingStaff({ ...editingStaff, status: e.target.value })}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs focus:outline-none bg-white"
-                >
-                  <option value="active">Active</option>
-                  <option value="inactive">Inactive</option>
-                </select>
-              </div>
-            </form>
-
-            {/* Footer */}
-            <div className="p-6 border-t border-slate-100 bg-slate-50 flex items-center gap-3 sticky bottom-0">
-              <button
-                type="button"
-                onClick={() => setShowEditModal(false)}
-                className="px-4 py-3 bg-white border border-slate-200 text-slate-700 font-semibold rounded-xl text-xs hover:bg-slate-100 transition cursor-pointer"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={handleUpdateStaffSubmit}
-                disabled={isUpdating}
-                className="flex-1 py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-xs transition cursor-pointer disabled:opacity-60 shadow-xs"
-              >
-                {isUpdating ? 'Saving Changes...' : 'Update Staff'}
-              </button>
-            </div>
+            <button
+              onClick={() => setShowEditModal(false)}
+              className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 font-bold flex items-center justify-center cursor-pointer transition"
+            >
+              ✕
+            </button>
           </div>
-        </div>
+
+          {/* Form */}
+          <form onSubmit={handleUpdateStaffSubmit} noValidate className="p-6 space-y-4 text-xs font-medium flex-1">
+            <div>
+              <label className="block font-semibold text-slate-700 mb-1">Full Name *</label>
+              <input
+                type="text"
+                required
+                value={editingStaff.name}
+                onChange={(e) => setEditingStaff({ ...editingStaff, name: e.target.value })}
+                className={`w-full px-3.5 py-2.5 rounded-xl border text-xs focus:outline-none ${
+                  editErrors.name ? 'border-rose-400 bg-rose-50/30' : 'border-slate-300'
+                }`}
+              />
+              {editErrors.name && <span className="text-rose-600 text-[11px] mt-1 block">⚠️ {editErrors.name}</span>}
+            </div>
+
+            <div>
+              <label className="block font-semibold text-slate-700 mb-1">Email Address *</label>
+              <input
+                type="email"
+                required
+                value={editingStaff.email}
+                onChange={(e) => setEditingStaff({ ...editingStaff, email: e.target.value })}
+                className={`w-full px-3.5 py-2.5 rounded-xl border text-xs focus:outline-none ${
+                  editErrors.email ? 'border-rose-400 bg-rose-50/30' : 'border-slate-300'
+                }`}
+              />
+              {editErrors.email && <span className="text-rose-600 text-[11px] mt-1 block">⚠️ {editErrors.email}</span>}
+            </div>
+
+            <div>
+              <label className="block font-semibold text-slate-700 mb-1">Mobile Number</label>
+              <input
+                type="tel"
+                value={editingStaff.mobile || ''}
+                onChange={(e) => setEditingStaff({ ...editingStaff, mobile: e.target.value })}
+                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs focus:outline-none"
+              />
+            </div>
+
+            <div>
+              <label className="block font-semibold text-slate-700 mb-1">
+                New Password (Optional)
+              </label>
+              <input
+                type="password"
+                value={editingStaff.password || ''}
+                onChange={(e) => setEditingStaff({ ...editingStaff, password: e.target.value })}
+                placeholder="Leave blank to keep current password"
+                className={`w-full px-3.5 py-2.5 rounded-xl border text-xs focus:outline-none ${
+                  editErrors.password ? 'border-rose-400 bg-rose-50/30' : 'border-slate-300'
+                }`}
+              />
+              {editErrors.password && <span className="text-rose-600 text-[11px] mt-1 block">⚠️ {editErrors.password}</span>}
+            </div>
+
+            {editingStaff.password && (
+              <div>
+                <label className="block font-semibold text-slate-700 mb-1">Confirm New Password</label>
+                <input
+                  type="password"
+                  value={editingStaff.password_confirmation || ''}
+                  onChange={(e) =>
+                    setEditingStaff({ ...editingStaff, password_confirmation: e.target.value })
+                  }
+                  className={`w-full px-3.5 py-2.5 rounded-xl border text-xs focus:outline-none ${
+                    editErrors.password_confirmation ? 'border-rose-400 bg-rose-50/30' : 'border-slate-300'
+                  }`}
+                />
+                {editErrors.password_confirmation && (
+                  <span className="text-rose-600 text-[11px] mt-1 block">⚠️ {editErrors.password_confirmation}</span>
+                )}
+              </div>
+            )}
+            
+            <div>
+              <label className="block font-semibold text-slate-700 mb-1">Account Status</label>
+              <select
+                value={editingStaff.status}
+                onChange={(e) => setEditingStaff({ ...editingStaff, status: e.target.value })}
+                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 text-xs focus:outline-none bg-white"
+              >
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
+            </div>
+          </form>
+
+          {/* Footer */}
+          <div className="p-6 border-t border-slate-100 bg-slate-50 flex items-center gap-3 sticky bottom-0">
+            <button
+              type="button"
+              onClick={() => setShowEditModal(false)}
+              className="px-4 py-3 bg-white border border-slate-200 text-slate-700 font-semibold rounded-xl text-xs hover:bg-slate-100 transition cursor-pointer"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={handleUpdateStaffSubmit}
+              disabled={isUpdating}
+              className="flex-1 py-3 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-xs transition cursor-pointer disabled:opacity-60 shadow-xs"
+            >
+              {isUpdating ? 'Saving Changes...' : 'Update Staff'}
+            </button>
+          </div>
+        </ResizableDrawer>
       )}
 
       {/* Main Content */}
