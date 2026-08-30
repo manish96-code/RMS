@@ -30,6 +30,22 @@ class MenuItem extends Model
     protected $appends = ['image_url'];
 
     /**
+     * Accessor for name attribute - ensures first letter is capitalized
+     */
+    public function getNameAttribute($value)
+    {
+        return $value ? ucfirst($value) : '';
+    }
+
+    /**
+     * Mutator for name attribute - stores with first letter capitalized
+     */
+    public function setNameAttribute($value)
+    {
+        $this->attributes['name'] = $value ? ucfirst(trim($value)) : '';
+    }
+
+    /**
      * Relationship: MenuItem belongs to a Restaurant
      */
     public function restaurant()

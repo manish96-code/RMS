@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import MenuItemDetailModal from '../menu/MenuItemDetailModal'
 
 const MenuSelector = ({
   categories,
@@ -7,6 +8,7 @@ const MenuSelector = ({
 }) => {
   const [selectedCatId, setSelectedCatId] = useState('')
   const [searchQuery, setSearchQuery] = useState('')
+  const [selectedDetailItem, setSelectedDetailItem] = useState(null)
 
   const availableItems = menuItems.filter((item) => {
     if (!item.is_available) return false
@@ -23,6 +25,16 @@ const MenuSelector = ({
 
   return (
     <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-2xs space-y-4 text-left">
+      {/* Detail Modal */}
+      {selectedDetailItem && (
+        <MenuItemDetailModal
+          item={selectedDetailItem}
+          onClose={() => setSelectedDetailItem(null)}
+          onAddToOrder={onAddToCart}
+          isAdmin={false}
+        />
+      )}
+
       {/* Header & Search */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pb-3 border-b border-slate-100">
         <div>
@@ -82,7 +94,13 @@ const MenuSelector = ({
             >
               <div className="space-y-1">
                 <div className="flex items-start justify-between gap-2">
-                  <h3 className="font-bold text-slate-900 text-xs leading-snug">{item.name}</h3>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedDetailItem(item)}
+                    className="text-left font-bold text-slate-900 text-xs leading-snug hover:text-emerald-700 transition cursor-pointer capitalize"
+                  >
+                    {item.name}
+                  </button>
                   <span className="font-extrabold text-xs text-slate-900 shrink-0">
                     ₹{Number(item.price).toFixed(2)}
                   </span>
@@ -97,11 +115,19 @@ const MenuSelector = ({
                 )}
               </div>
 
-              <div className="pt-3 border-t border-slate-100 mt-2">
+              <div className="pt-3 border-t border-slate-100 mt-2 flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setSelectedDetailItem(item)}
+                  className="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-lg transition cursor-pointer"
+                  title="View details"
+                >
+                  👁️
+                </button>
                 <button
                   type="button"
                   onClick={() => onAddToCart(item)}
-                  className="w-full py-1.5 bg-slate-100 hover:bg-slate-900 hover:text-white text-slate-800 text-xs font-bold rounded-lg transition cursor-pointer flex items-center justify-center gap-1"
+                  className="flex-1 py-1.5 bg-slate-100 hover:bg-slate-900 hover:text-white text-slate-800 text-xs font-bold rounded-lg transition cursor-pointer flex items-center justify-center gap-1"
                 >
                   <span>+</span> Add to Order
                 </button>

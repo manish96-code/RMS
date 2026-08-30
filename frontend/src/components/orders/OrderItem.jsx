@@ -10,7 +10,7 @@ const OrderItem = ({
     <div className="p-3.5 bg-slate-50 border border-slate-200/80 rounded-xl space-y-2 text-left">
       <div className="flex items-start justify-between gap-2">
         <div>
-          <h4 className="text-xs font-bold text-slate-900 leading-snug">{item.name}</h4>
+          <h4 className="text-xs font-bold text-slate-900 leading-snug capitalize">{item.name}</h4>
           <span className="text-[11px] text-slate-500 font-semibold">
             ₹{Number(item.price).toFixed(2)} each
           </span>

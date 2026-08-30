@@ -5,20 +5,25 @@ const MenuItemCard = ({
   onToggleAvailability,
   onEdit,
   onDelete,
+  onView,
   isAdmin = false,
 }) => {
   const isAvailable = !!item.is_available
 
   return (
-    <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-2xs hover:shadow-md transition flex flex-col justify-between text-left">
+    <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-2xs hover:shadow-md transition flex flex-col justify-between text-left group">
       
-      {/* Image & Badges Banner */}
-      <div className="h-40 bg-slate-100 relative overflow-hidden flex items-center justify-center">
+      {/* Image & Badges Banner - Clickable */}
+      <div 
+        onClick={() => onView && onView(item)}
+        className="h-40 bg-slate-100 relative overflow-hidden flex items-center justify-center cursor-pointer"
+        title="Click to view full details modal"
+      >
         {item.image_url ? (
           <img
             src={item.image_url}
             alt={item.name}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover transition duration-300 group-hover:scale-105"
             onError={(e) => {
               e.target.style.display = 'none'
             }}
@@ -52,9 +57,12 @@ const MenuItemCard = ({
       <div className="p-4 space-y-2 flex-1 flex flex-col justify-between">
         <div>
           <div className="flex items-start justify-between gap-2">
-            <h3 className="font-bold text-slate-900 text-sm tracking-tight leading-snug">
+            <button
+              onClick={() => onView && onView(item)}
+              className="text-left font-bold text-slate-900 text-sm tracking-tight leading-snug hover:text-emerald-700 transition cursor-pointer capitalize"
+            >
               {item.name}
-            </h3>
+            </button>
             <span className="font-extrabold text-slate-900 text-sm shrink-0">
               ₹{Number(item.price).toFixed(2)}
             </span>
@@ -65,27 +73,32 @@ const MenuItemCard = ({
           </p>
         </div>
 
-        {/* Admin Action Bar */}
-        {isAdmin && (
-          <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-2 text-xs font-semibold">
-            {/* Availability Toggle Button */}
-            <button
-              onClick={() => onToggleAvailability(item)}
-              className={`px-2.5 py-1 rounded-lg text-[11px] font-bold cursor-pointer transition ${
-                isAvailable
-                  ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100'
-                  : 'bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100'
-              }`}
-            >
-              {isAvailable ? '🟢 Available' : '🔴 Unavailable'}
-            </button>
+        {/* Action Bar */}
+        <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-2 text-xs font-semibold">
+          <button
+            onClick={() => onView && onView(item)}
+            className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[11px] font-bold transition cursor-pointer flex items-center gap-1"
+          >
+            <span>👁️</span> View
+          </button>
 
-            <div className="flex items-center gap-1">
+          {isAdmin ? (
+            <div className="flex items-center gap-1.5">
+              <button
+                onClick={() => onToggleAvailability(item)}
+                className={`px-2.5 py-1 rounded-lg text-[11px] font-bold cursor-pointer transition ${
+                  isAvailable
+                    ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100'
+                    : 'bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100'
+                }`}
+              >
+                {isAvailable ? '🟢' : '🔴'}
+              </button>
               <button
                 onClick={() => onEdit(item)}
                 className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs transition cursor-pointer"
               >
-                ✏️ Edit
+                ✏️
               </button>
               <button
                 onClick={() => onDelete(item)}
@@ -94,8 +107,12 @@ const MenuItemCard = ({
                 🗑️
               </button>
             </div>
-          </div>
-        )}
+          ) : (
+            <span className="text-[11px] font-bold text-slate-400">
+              {isAvailable ? 'In Stock' : 'Out of Stock'}
+            </span>
+          )}
+        </div>
       </div>
 
     </div>

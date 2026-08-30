@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import MenuItemCard from './MenuItemCard'
+import MenuItemDetailModal from './MenuItemDetailModal'
 
 const MenuItemList = ({
   items,
@@ -7,9 +8,11 @@ const MenuItemList = ({
   onEditItem,
   onDeleteItem,
   isAdmin = false,
+  onAddToOrder,
 }) => {
   // Default viewMode to 'table' as requested by user ("menu management me items table ke form me dikhao")
   const [viewMode, setViewMode] = useState('table') // 'table' or 'grid'
+  const [selectedDetailItem, setSelectedDetailItem] = useState(null)
 
   if (items.length === 0) {
     return (
@@ -25,6 +28,17 @@ const MenuItemList = ({
 
   return (
     <div className="space-y-4">
+      {/* Item Detail Modal */}
+      {selectedDetailItem && (
+        <MenuItemDetailModal
+          item={selectedDetailItem}
+          onClose={() => setSelectedDetailItem(null)}
+          onEdit={onEditItem}
+          isAdmin={isAdmin}
+          onAddToOrder={onAddToOrder}
+        />
+      )}
+
       {/* View Mode Switcher Header */}
       <div className="flex items-center justify-between text-xs font-semibold text-slate-500">
         <span>Showing {items.length} food items</span>
@@ -60,7 +74,7 @@ const MenuItemList = ({
                   <th className="px-4 py-3.5">Category</th>
                   <th className="px-4 py-3.5">Price</th>
                   <th className="px-4 py-3.5">Availability Status</th>
-                  {isAdmin && <th className="px-4 py-3.5 text-right">Actions</th>}
+                  <th className="px-4 py-3.5 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 font-medium">
@@ -69,22 +83,29 @@ const MenuItemList = ({
 
                   return (
                     <tr key={item.id} className="hover:bg-slate-50/80 transition">
-                      {/* Image Thumbnail */}
+                      {/* Image Thumbnail - Click to View */}
                       <td className="px-4 py-3">
-                        <div className="w-11 h-11 rounded-xl bg-slate-100 overflow-hidden flex items-center justify-center border border-slate-200 shadow-2xs shrink-0">
+                        <button
+                          onClick={() => setSelectedDetailItem(item)}
+                          className="w-11 h-11 rounded-xl bg-slate-100 overflow-hidden flex items-center justify-center border border-slate-200 shadow-2xs shrink-0 cursor-pointer hover:opacity-80 transition"
+                          title="Click to view details"
+                        >
                           {item.image_url ? (
                             <img src={item.image_url} alt={item.name} className="w-full h-full object-cover" />
                           ) : (
                             <span className="text-xl">🍲</span>
                           )}
-                        </div>
+                        </button>
                       </td>
 
-                      {/* Name & Description */}
+                      {/* Name & Description - Click to View */}
                       <td className="px-4 py-3">
-                        <div className="font-extrabold text-slate-900 text-sm leading-snug">
+                        <button
+                          onClick={() => setSelectedDetailItem(item)}
+                          className="text-left font-extrabold text-slate-900 text-sm leading-snug hover:text-emerald-700 transition cursor-pointer capitalize"
+                        >
                           {item.name}
-                        </div>
+                        </button>
                         {item.description ? (
                           <div className="text-[11px] text-slate-500 font-medium line-clamp-1 max-w-sm mt-0.5">
                             {item.description}
@@ -132,25 +153,35 @@ const MenuItemList = ({
                         )}
                       </td>
 
-                      {/* Admin Actions */}
-                      {isAdmin && (
-                        <td className="px-4 py-3 text-right">
-                          <div className="flex items-center justify-end gap-2">
-                            <button
-                              onClick={() => onEditItem(item)}
-                              className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition cursor-pointer"
-                            >
-                              ✏️ Edit
-                            </button>
-                            <button
-                              onClick={() => onDeleteItem(item)}
-                              className="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold rounded-xl text-xs transition cursor-pointer border border-rose-200"
-                            >
-                              🗑️ Delete
-                            </button>
-                          </div>
-                        </td>
-                      )}
+                      {/* Actions Column */}
+                      <td className="px-4 py-3 text-right">
+                        <div className="flex items-center justify-end gap-2">
+                          <button
+                            onClick={() => setSelectedDetailItem(item)}
+                            className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition cursor-pointer flex items-center gap-1"
+                            title="View Dish Details Modal"
+                          >
+                            <span>👁️</span> View
+                          </button>
+
+                          {isAdmin && (
+                            <>
+                              <button
+                                onClick={() => onEditItem(item)}
+                                className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition cursor-pointer"
+                              >
+                                ✏️ Edit
+                              </button>
+                              <button
+                                onClick={() => onDeleteItem(item)}
+                                className="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold rounded-xl text-xs transition cursor-pointer border border-rose-200"
+                              >
+                                🗑️ Delete
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      </td>
                     </tr>
                   )
                 })}
@@ -168,6 +199,7 @@ const MenuItemList = ({
               onToggleAvailability={onToggleAvailability}
               onEdit={onEditItem}
               onDelete={onDeleteItem}
+              onView={(viewItem) => setSelectedDetailItem(viewItem)}
               isAdmin={isAdmin}
             />
           ))}
