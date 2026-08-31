@@ -91,24 +91,24 @@ const KitchenDashboard = () => {
   const backLink = user?.role === 'admin' ? '/admin/dashboard' : '/staff/dashboard'
 
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-100 font-sans antialiased flex flex-col justify-between">
-      {/* Top Bar Header */}
-      <header className="bg-slate-950 border-b border-slate-800 px-6 py-4 sticky top-0 z-30 shadow-md">
+    <div className="min-h-screen bg-slate-50 text-slate-800 font-sans antialiased flex flex-col justify-between">
+      {/* Top Bar Header (Crisp Light Theme) */}
+      <header className="bg-white border-b border-slate-200 px-6 py-4 sticky top-0 z-30 shadow-2xs">
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 max-w-7xl mx-auto">
           {/* Brand & Page Info */}
           <div className="flex items-center gap-3">
             <Link
               to={backLink}
-              className="w-10 h-10 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold flex items-center justify-center transition cursor-pointer"
+              className="w-10 h-10 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold flex items-center justify-center transition cursor-pointer"
               title="Return to Dashboard"
             >
               ←
             </Link>
             <div>
-              <h1 className="text-lg font-black tracking-tight text-white flex items-center gap-2">
+              <h1 className="text-lg font-black tracking-tight text-slate-900 flex items-center gap-2">
                 <span>👨‍🍳</span> Kitchen Display System (KDS)
               </h1>
-              <p className="text-xs text-slate-400 font-medium mt-0.5">
+              <p className="text-xs text-slate-500 font-medium mt-0.5">
                 Real-time Kitchen Order Tickets ({orders.length} active orders)
               </p>
             </div>
@@ -119,10 +119,10 @@ const KitchenDashboard = () => {
             {/* Auto-Refresh Toggle */}
             <button
               onClick={() => setAutoRefreshEnabled(!autoRefreshEnabled)}
-              className={`px-3 py-1.5 rounded-xl border transition cursor-pointer flex items-center gap-1.5 ${
+              className={`px-3.5 py-2 rounded-xl border transition cursor-pointer flex items-center gap-1.5 ${
                 autoRefreshEnabled
-                  ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40 hover:bg-emerald-500/30'
-                  : 'bg-slate-800 text-slate-400 border-slate-700 hover:bg-slate-700'
+                  ? 'bg-emerald-50 text-emerald-800 border-emerald-200 hover:bg-emerald-100 font-bold'
+                  : 'bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200'
               }`}
               title="Toggle automatic 10-second background polling"
             >
@@ -133,13 +133,13 @@ const KitchenDashboard = () => {
             <button
               onClick={() => fetchKitchenOrders(true)}
               disabled={loading}
-              className="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl border border-slate-700 transition cursor-pointer flex items-center gap-1.5 disabled:opacity-50"
+              className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl transition cursor-pointer flex items-center gap-1.5 disabled:opacity-50 shadow-2xs"
             >
               <span>🔄</span> Refresh
             </button>
 
             {/* Last Updated Timestamp */}
-            <span className="text-[11px] text-slate-400 font-normal hidden md:inline-block">
+            <span className="text-[11px] text-slate-500 font-medium hidden md:inline-block">
               Updated: {lastRefreshed.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
             </span>
           </div>
@@ -149,9 +149,9 @@ const KitchenDashboard = () => {
       {/* Main Kanban Content Viewport */}
       <main className="flex-1 p-6 max-w-7xl w-full mx-auto space-y-6">
         {loading && orders.length === 0 ? (
-          <div className="py-24 text-center space-y-3">
+          <div className="py-24 text-center space-y-3 bg-white rounded-3xl border border-slate-200 p-8 shadow-2xs">
             <span className="text-4xl block animate-bounce">🍳</span>
-            <h3 className="text-sm font-bold text-slate-300">Loading Kitchen Order Tickets...</h3>
+            <h3 className="text-sm font-bold text-slate-800">Loading Kitchen Order Tickets...</h3>
             <p className="text-xs text-slate-500">Connecting to restaurant kitchen server</p>
           </div>
         ) : (

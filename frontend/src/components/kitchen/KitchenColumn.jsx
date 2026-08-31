@@ -34,7 +34,7 @@ const KitchenColumn = ({
   }[type]
 
   return (
-    <div className="flex-1 flex flex-col min-w-[300px] bg-slate-100/70 border border-slate-200 rounded-3xl p-4 space-y-4">
+    <div className="flex-1 flex flex-col min-w-[300px] bg-white border border-slate-200 rounded-3xl p-4 space-y-4 shadow-2xs">
       {/* Column Header */}
       <div className={`p-4 rounded-2xl border ${headerStyles.bg} ${headerStyles.border} flex items-center justify-between`}>
         <div className="flex items-center gap-2.5">
