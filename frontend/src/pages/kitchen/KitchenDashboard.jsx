@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { toast } from 'react-hot-toast'
 import KitchenColumn from '../../components/kitchen/KitchenColumn'
+import AdminSidebar from '../../components/AdminSidebar'
 import { kitchenService } from '../../services/kitchenService'
 import { useAuth } from '../../context/AuthContext'
 
@@ -12,7 +13,6 @@ const KitchenDashboard = () => {
   const [updatingOrderId, setUpdatingOrderId] = useState(null)
   const [lastRefreshed, setLastRefreshed] = useState(new Date())
   const [autoRefreshEnabled, setAutoRefreshEnabled] = useState(true)
-  const [soundEnabled, setSoundEnabled] = useState(true)
 
   const previousPendingCount = useRef(0)
 
@@ -88,30 +88,26 @@ const KitchenDashboard = () => {
   const preparingOrders = orders.filter((o) => o.status === 'preparing')
   const readyOrders = orders.filter((o) => o.status === 'ready')
 
-  const backLink = user?.role === 'admin' ? '/admin/dashboard' : '/staff/dashboard'
+  const isAdmin = user?.role === 'admin'
+  const backLink = isAdmin ? '/admin/dashboard' : '/staff/dashboard'
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-800 font-sans antialiased flex flex-col justify-between">
-      {/* Top Bar Header (Crisp Light Theme) */}
-      <header className="bg-white border-b border-slate-200 px-6 py-4 sticky top-0 z-30 shadow-2xs">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 max-w-7xl mx-auto">
-          {/* Brand & Page Info */}
-          <div className="flex items-center gap-3">
-            <Link
-              to={backLink}
-              className="w-10 h-10 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold flex items-center justify-center transition cursor-pointer"
-              title="Return to Dashboard"
-            >
-              ←
-            </Link>
-            <div>
-              <h1 className="text-lg font-black tracking-tight text-slate-900 flex items-center gap-2">
-                <span>👨‍🍳</span> Kitchen Display System (KDS)
-              </h1>
-              <p className="text-xs text-slate-500 font-medium mt-0.5">
-                Real-time Kitchen Order Tickets ({orders.length} active orders)
-              </p>
-            </div>
+    <div className="flex min-h-screen bg-slate-50 text-slate-800 font-sans antialiased text-left">
+      {/* Sidebar for Admin users */}
+      {isAdmin && <AdminSidebar />}
+
+      {/* Main Viewport Content Area */}
+      <main className="flex-1 min-h-screen overflow-y-auto p-6 lg:p-8 space-y-6">
+        {/* Header (Standardized with all Admin Pages) */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
+          <div>
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-400">Kitchen & KOT Management</span>
+            <h1 className="text-xl font-bold text-slate-900 tracking-tight mt-0.5 flex items-center gap-2">
+              <span>👨‍🍳</span> Kitchen Display System (KDS)
+            </h1>
+            <p className="text-xs text-slate-500 mt-0.5">
+              Real-time Kitchen Order Tickets ({orders.length} active orders)
+            </p>
           </div>
 
           {/* Action Toolbar & Timers */}
@@ -144,10 +140,8 @@ const KitchenDashboard = () => {
             </span>
           </div>
         </div>
-      </header>
 
-      {/* Main Kanban Content Viewport */}
-      <main className="flex-1 p-6 max-w-7xl w-full mx-auto space-y-6">
+        {/* Main Kanban Content Viewport */}
         {loading && orders.length === 0 ? (
           <div className="py-24 text-center space-y-3 bg-white rounded-3xl border border-slate-200 p-8 shadow-2xs">
             <span className="text-4xl block animate-bounce">🍳</span>
@@ -155,7 +149,7 @@ const KitchenDashboard = () => {
             <p className="text-xs text-slate-500">Connecting to restaurant kitchen server</p>
           </div>
         ) : (
-          <div className="flex flex-col lg:flex-row gap-6 min-h-[calc(100vh-140px)]">
+          <div className="flex flex-col lg:flex-row gap-6 min-h-[calc(100vh-220px)]">
             {/* 1. Pending Column */}
             <KitchenColumn
               title="Pending Orders"

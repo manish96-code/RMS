@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'react-hot-toast'
+import AdminSidebar from '../../../components/AdminSidebar'
 import { billingService } from '../../../services/billingService'
 import { useAuth } from '../../../context/AuthContext'
 
@@ -56,9 +57,15 @@ const BillPage = () => {
   const backLink = user?.role === 'admin' ? `/admin/orders/${id}` : `/staff/orders/${id}`
   const receiptLink = user?.role === 'admin' ? `/admin/orders/${id}/receipt` : `/staff/orders/${id}/receipt`
 
+  const isAdmin = user?.role === 'admin'
+
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-800 font-sans antialiased pb-12">
-      {/* Top Header Navbar */}
+    <div className="flex min-h-screen bg-slate-50 text-slate-800 font-sans antialiased text-left">
+      {/* Sidebar for Admin users */}
+      {isAdmin && <AdminSidebar />}
+
+      <div className="flex-1 flex flex-col justify-between overflow-x-hidden pb-12">
+        {/* Top Header Navbar */}
       <header className="bg-white border-b border-slate-200 px-6 py-4 sticky top-0 z-30 shadow-2xs">
         <div className="max-w-4xl mx-auto flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
@@ -361,6 +368,7 @@ const BillPage = () => {
           </div>
         </div>
       )}
+      </div>
     </div>
   )
 }
