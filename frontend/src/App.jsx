@@ -32,6 +32,9 @@ import CreateOrder from './pages/staff/orders/CreateOrder'
 import StaffOrders from './pages/staff/orders/Orders'
 import StaffOrderDetails from './pages/staff/orders/OrderDetails'
 
+// Kitchen KDS Page
+import KitchenDashboard from './pages/kitchen/KitchenDashboard'
+
 // General Pages
 import Home from './pages/Home'
 
@@ -114,6 +117,15 @@ const AppContent = () => {
                 >
                   POS Terminal
                 </Link>
+
+                {isAuthenticated && (
+                  <Link
+                    to="/kitchen"
+                    className="px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 transition flex items-center gap-1"
+                  >
+                    <span>👨‍🍳</span> Kitchen KDS
+                  </Link>
+                )}
 
                 {isAuthenticated && user?.role === 'admin' && (
                   <Link
@@ -204,6 +216,7 @@ const AppContent = () => {
             <Route path="/admin/view-product/:id" element={<ViewProduct />} />
             <Route path="/admin/edit-product/:id" element={<EditProduct />} />
             <Route path="/admin/transactions" element={<Transactions />} />
+            <Route path="/admin/kitchen" element={<KitchenDashboard />} />
           </Route>
 
           {/* Protected Staff Routes */}
@@ -215,6 +228,8 @@ const AppContent = () => {
             <Route path="/staff/orders" element={<StaffOrders />} />
             <Route path="/staff/orders/create" element={<CreateOrder />} />
             <Route path="/staff/orders/:id" element={<StaffOrderDetails />} />
+            <Route path="/staff/kitchen" element={<KitchenDashboard />} />
+            <Route path="/kitchen" element={<KitchenDashboard />} />
           </Route>
 
           {/* Fallback Route */}

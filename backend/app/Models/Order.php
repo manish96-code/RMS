@@ -22,6 +22,11 @@ class Order extends Model
         'discount',
         'total',
         'notes',
+        'preparing_at',
+        'ready_at',
+        'served_at',
+        'completed_at',
+        'cancelled_at',
     ];
 
     protected $casts = [
@@ -29,6 +34,11 @@ class Order extends Model
         'tax' => 'float',
         'discount' => 'float',
         'total' => 'float',
+        'preparing_at' => 'datetime',
+        'ready_at' => 'datetime',
+        'served_at' => 'datetime',
+        'completed_at' => 'datetime',
+        'cancelled_at' => 'datetime',
     ];
 
     /**

@@ -266,13 +266,21 @@ class OrderController extends Controller
             ], 404);
         }
 
-        $order->update(['status' => $request->status]);
+        try {
+            $statusService = new \App\Services\OrderStatusService();
+            $updatedOrder = $statusService->transition($order, $request->status);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Order status updated successfully',
-            'data' => new OrderResource($order->fresh(['table', 'staff', 'items.menuItem'])),
-        ], 200);
+            return response()->json([
+                'success' => true,
+                'message' => 'Order status updated successfully',
+                'data' => new OrderResource($updatedOrder->load(['table', 'staff', 'items.menuItem'])),
+            ], 200);
+        } catch (\InvalidArgumentException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage() ?: 'Invalid order status transition',
+            ], 422);
+        }
     }
 
     /**

@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\DishController;
 use App\Http\Controllers\Api\HomeController;
+use App\Http\Controllers\Api\KitchenController;
 use App\Http\Controllers\Api\MenuItemController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\ProfileController;
@@ -47,6 +48,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/orders', [OrderController::class, 'store']);
     Route::patch('/orders/{id}/status', [OrderController::class, 'updateStatus']);
     Route::post('/orders/{id}/cancel', [OrderController::class, 'cancel']);
+
+    // Kitchen & KOT Management APIs (Module 6 - Accessible by Admin & Staff)
+    Route::get('/kitchen/orders', [KitchenController::class, 'index']);
+    Route::patch('/kitchen/orders/{id}/preparing', [KitchenController::class, 'markPreparing']);
+    Route::patch('/kitchen/orders/{id}/ready', [KitchenController::class, 'markReady']);
 
     // Category & Menu Item Read APIs (Module 3)
     Route::get('/categories', [CategoryController::class, 'index']);

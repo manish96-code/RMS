@@ -127,27 +127,63 @@ const StaffOrderDetails = () => {
 
               {/* Status Actions */}
               <div className="flex items-center gap-2">
-                {order.status === 'pending' && (
+                {order.status === 'ready' && (
                   <button
                     onClick={() => handleUpdateStatus('served')}
                     disabled={isUpdating}
-                    className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-2xs transition cursor-pointer disabled:opacity-60"
+                    className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-2xs transition cursor-pointer disabled:opacity-60 flex items-center gap-1.5"
                   >
-                    Mark Served
+                    <span>🍽️</span>
+                    <span>{isUpdating ? 'Updating...' : 'Mark as Served'}</span>
                   </button>
+                )}
+
+                {order.status === 'pending' && (
+                  <span className="px-3 py-1.5 bg-amber-50 text-amber-800 border border-amber-200 rounded-xl text-xs font-semibold">
+                    ⏳ Waiting for Kitchen...
+                  </span>
+                )}
+
+                {order.status === 'preparing' && (
+                  <span className="px-3 py-1.5 bg-blue-50 text-blue-800 border border-blue-200 rounded-xl text-xs font-semibold">
+                    🔥 Kitchen is Cooking...
+                  </span>
                 )}
 
                 {order.status !== 'completed' && order.status !== 'cancelled' && (
                   <button
                     onClick={handleCancelOrder}
                     disabled={isUpdating}
-                    className="px-3.5 py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-semibold text-xs rounded-xl transition cursor-pointer disabled:opacity-60"
+                    className="px-3.5 py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-xs rounded-xl border border-rose-200 transition cursor-pointer disabled:opacity-60"
                   >
                     Cancel Order
                   </button>
                 )}
               </div>
             </div>
+
+            {/* Ready Status Alert Banner */}
+            {order.status === 'ready' && (
+              <div className="p-4 bg-emerald-50 border border-emerald-200 text-emerald-900 rounded-2xl flex items-center justify-between gap-4">
+                <div className="flex items-center gap-2.5">
+                  <span className="text-2xl">🟢</span>
+                  <div>
+                    <h4 className="font-extrabold text-xs">Order Ready for Pickup!</h4>
+                    <p className="text-[11px] text-emerald-700 font-medium mt-0.5">
+                      Kitchen has prepared the food items. Carry order to Table {order.table?.table_number || 'N/A'}.
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => handleUpdateStatus('served')}
+                  disabled={isUpdating}
+                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl transition cursor-pointer shrink-0 shadow-2xs"
+                >
+                  Mark Served
+                </button>
+              </div>
+            )}
 
             {/* Meta Cards: Table & Staff Info */}
             <div className="grid grid-cols-2 gap-4">

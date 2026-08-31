@@ -126,9 +126,25 @@ const StaffOrders = () => {
               ⏳ Pending
             </button>
             <button
+              onClick={() => setStatusFilter('preparing')}
+              className={`px-3 py-1.5 rounded-xl transition cursor-pointer ${
+                statusFilter === 'preparing' ? 'bg-blue-600 text-white shadow-2xs' : 'bg-slate-100 text-slate-600 hover:text-slate-900'
+              }`}
+            >
+              🔥 Preparing
+            </button>
+            <button
+              onClick={() => setStatusFilter('ready')}
+              className={`px-3 py-1.5 rounded-xl transition cursor-pointer ${
+                statusFilter === 'ready' ? 'bg-emerald-600 text-white shadow-2xs font-bold' : 'bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-100'
+              }`}
+            >
+              🟢 Ready
+            </button>
+            <button
               onClick={() => setStatusFilter('served')}
               className={`px-3 py-1.5 rounded-xl transition cursor-pointer ${
-                statusFilter === 'served' ? 'bg-emerald-600 text-white shadow-2xs' : 'bg-slate-100 text-slate-600 hover:text-slate-900'
+                statusFilter === 'served' ? 'bg-slate-800 text-white shadow-2xs' : 'bg-slate-100 text-slate-600 hover:text-slate-900'
               }`}
             >
               🍽️ Served
