@@ -71,6 +71,14 @@ class Restaurant extends Model
     }
 
     /**
+     * Relationship: Restaurant has many Payments
+     */
+    public function payments()
+    {
+        return $this->hasMany(Payment::class, 'restaurant_id');
+    }
+
+    /**
      * Accessor for full logo URL
      */
     public function getLogoUrlAttribute()

@@ -35,6 +35,10 @@ import StaffOrderDetails from './pages/staff/orders/OrderDetails'
 // Kitchen KDS Page
 import KitchenDashboard from './pages/kitchen/KitchenDashboard'
 
+// Billing & Receipt Pages
+import BillPage from './pages/staff/billing/BillPage'
+import ReceiptPage from './pages/staff/billing/ReceiptPage'
+
 // General Pages
 import Home from './pages/Home'
 
@@ -217,6 +221,8 @@ const AppContent = () => {
             <Route path="/admin/edit-product/:id" element={<EditProduct />} />
             <Route path="/admin/transactions" element={<Transactions />} />
             <Route path="/admin/kitchen" element={<KitchenDashboard />} />
+            <Route path="/admin/orders/:id/bill" element={<BillPage />} />
+            <Route path="/admin/orders/:id/receipt" element={<ReceiptPage />} />
           </Route>
 
           {/* Protected Staff Routes */}
@@ -228,6 +234,8 @@ const AppContent = () => {
             <Route path="/staff/orders" element={<StaffOrders />} />
             <Route path="/staff/orders/create" element={<CreateOrder />} />
             <Route path="/staff/orders/:id" element={<StaffOrderDetails />} />
+            <Route path="/staff/orders/:id/bill" element={<BillPage />} />
+            <Route path="/staff/orders/:id/receipt" element={<ReceiptPage />} />
             <Route path="/staff/kitchen" element={<KitchenDashboard />} />
             <Route path="/kitchen" element={<KitchenDashboard />} />
           </Route>

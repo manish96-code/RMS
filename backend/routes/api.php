@@ -2,12 +2,14 @@
 
 use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\BillingController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\DishController;
 use App\Http\Controllers\Api\HomeController;
 use App\Http\Controllers\Api\KitchenController;
 use App\Http\Controllers\Api\MenuItemController;
 use App\Http\Controllers\Api\OrderController;
+use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\RestaurantController;
 use App\Http\Controllers\Api\StaffController;
@@ -53,6 +55,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/kitchen/orders', [KitchenController::class, 'index']);
     Route::patch('/kitchen/orders/{id}/preparing', [KitchenController::class, 'markPreparing']);
     Route::patch('/kitchen/orders/{id}/ready', [KitchenController::class, 'markReady']);
+
+    // Billing & Payment APIs (Module 7 - Accessible by Admin & Staff)
+    Route::get('/orders/{id}/bill', [BillingController::class, 'show']);
+    Route::post('/orders/{id}/payment', [PaymentController::class, 'store']);
+    Route::get('/orders/{id}/payment', [PaymentController::class, 'show']);
+    Route::get('/orders/{id}/receipt', [BillingController::class, 'receipt']);
 
     // Category & Menu Item Read APIs (Module 3)
     Route::get('/categories', [CategoryController::class, 'index']);

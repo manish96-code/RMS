@@ -72,4 +72,12 @@ class Order extends Model
     {
         return $this->hasMany(OrderItem::class, 'order_id');
     }
+
+    /**
+     * Relationship: Order has one Payment
+     */
+    public function payment()
+    {
+        return $this->hasOne(Payment::class, 'order_id');
+    }
 }

@@ -126,6 +126,24 @@ const AdminOrderDetails = () => {
                   <option value="cancelled">Cancelled</option>
                 </select>
 
+                {order.status === 'served' && (
+                  <Link
+                    to={`/admin/orders/${order.id}/bill`}
+                    className="px-3.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl shadow-2xs transition flex items-center gap-1"
+                  >
+                    <span>🧾</span> Bill
+                  </Link>
+                )}
+
+                {(order.status === 'completed' || order.payment) && (
+                  <Link
+                    to={`/admin/orders/${order.id}/receipt`}
+                    className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-2xs transition flex items-center gap-1"
+                  >
+                    <span>🖨️</span> Receipt
+                  </Link>
+                )}
+
                 {order.status !== 'completed' && order.status !== 'cancelled' && (
                   <button
                     onClick={handleCancelOrder}
