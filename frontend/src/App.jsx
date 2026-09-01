@@ -39,6 +39,9 @@ import KitchenDashboard from './pages/kitchen/KitchenDashboard'
 import BillPage from './pages/staff/billing/BillPage'
 import ReceiptPage from './pages/staff/billing/ReceiptPage'
 
+// Reports Page
+import SalesReport from './pages/admin/reports/SalesReport'
+
 // General Pages
 import Home from './pages/Home'
 
@@ -223,6 +226,7 @@ const AppContent = () => {
             <Route path="/admin/kitchen" element={<KitchenDashboard />} />
             <Route path="/admin/orders/:id/bill" element={<BillPage />} />
             <Route path="/admin/orders/:id/receipt" element={<ReceiptPage />} />
+            <Route path="/admin/reports" element={<SalesReport />} />
           </Route>
 
           {/* Protected Staff Routes */}

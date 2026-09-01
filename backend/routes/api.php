@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BillingController;
 use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\DishController;
 use App\Http\Controllers\Api\HomeController;
 use App\Http\Controllers\Api\KitchenController;
@@ -11,6 +12,7 @@ use App\Http\Controllers\Api\MenuItemController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\ProfileController;
+use App\Http\Controllers\Api\ReportController;
 use App\Http\Controllers\Api\RestaurantController;
 use App\Http\Controllers\Api\StaffController;
 use App\Http\Controllers\Api\StudentController;
@@ -78,6 +80,10 @@ Route::middleware('auth:sanctum')->group(function () {
     |--------------------------------------------------------------------------
     */
     Route::middleware('admin')->group(function () {
+        // Dashboard & Sales Reports APIs (Module 8)
+        Route::get('/dashboard', [DashboardController::class, 'index']);
+        Route::get('/reports/sales', [ReportController::class, 'sales']);
+
         // Table Management APIs (Module 4)
         Route::post('/tables', [TableController::class, 'store']);
         Route::put('/tables/{id}', [TableController::class, 'update']);

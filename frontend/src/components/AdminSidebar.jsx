@@ -6,6 +6,7 @@ const AdminSidebar = ({ dishesCount = 0 }) => {
 
   const navItems = [
     { path: '/admin', label: 'Dashboard Overview', icon: '📊' },
+    { path: '/admin/reports', label: 'Sales Reports', icon: '📈' },
     { path: '/admin/orders', label: 'Orders Management', icon: '📋' },
     { path: '/admin/kitchen', label: 'Kitchen Display (KDS)', icon: '👨‍🍳' },
     { path: '/admin/restaurant', label: 'Restaurant Setup', icon: '🏪' },
