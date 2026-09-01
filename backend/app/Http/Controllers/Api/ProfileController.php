@@ -10,6 +10,20 @@ use Illuminate\Support\Facades\Hash;
 class ProfileController extends Controller
 {
     /**
+     * GET /api/profile
+     */
+    public function show(\Illuminate\Http\Request $request)
+    {
+        return response()->json([
+            'success' => true,
+            'message' => 'Profile details fetched successfully',
+            'data' => [
+                'user' => $request->user(),
+            ],
+        ], 200);
+    }
+
+    /**
      * PUT /api/profile
      */
     public function updateProfile(UpdateProfileRequest $request)

@@ -25,7 +25,14 @@ class Restaurant extends Model
         'gst_number',
         'opening_time',
         'closing_time',
+        'tax_enabled',
+        'tax_percentage',
         'status',
+    ];
+
+    protected $casts = [
+        'tax_enabled' => 'boolean',
+        'tax_percentage' => 'float',
     ];
 
     protected $appends = ['logo_url'];

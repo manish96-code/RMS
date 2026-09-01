@@ -65,11 +65,23 @@ class AuthController extends Controller
      */
     public function user(Request $request)
     {
+        $user = $request->user();
+
+        if ($user && (strtolower($user->status) !== 'active' || $user->is_active === false)) {
+            if ($user->currentAccessToken()) {
+                $user->currentAccessToken()->delete();
+            }
+            return response()->json([
+                'success' => false,
+                'message' => 'Your account is inactive. Please contact Admin.',
+            ], 403);
+        }
+
         return response()->json([
             'success' => true,
             'message' => 'Authenticated user retrieved successfully',
             'data' => [
-                'user' => $request->user(),
+                'user' => $user,
             ],
         ], 200);
     }

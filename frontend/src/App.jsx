@@ -6,7 +6,6 @@ import { ProtectedRoute, AdminRoute, StaffRoute } from './components/ProtectedRo
 
 // Auth Pages
 import Login from './pages/auth/Login'
-import Profile from './pages/Profile'
 
 // Admin Pages
 import AdminDashboard from './pages/admin/Dashboard'
@@ -39,8 +38,9 @@ import KitchenDashboard from './pages/kitchen/KitchenDashboard'
 import BillPage from './pages/staff/billing/BillPage'
 import ReceiptPage from './pages/staff/billing/ReceiptPage'
 
-// Reports Page
-import SalesReport from './pages/admin/reports/SalesReport'
+// Settings & Profile Pages
+import Settings from './pages/admin/Settings'
+import Profile from './pages/profile/Profile'
 
 // General Pages
 import Home from './pages/Home'
@@ -227,6 +227,8 @@ const AppContent = () => {
             <Route path="/admin/orders/:id/bill" element={<BillPage />} />
             <Route path="/admin/orders/:id/receipt" element={<ReceiptPage />} />
             <Route path="/admin/reports" element={<SalesReport />} />
+            <Route path="/admin/settings" element={<Settings />} />
+            <Route path="/profile" element={<Profile />} />
           </Route>
 
           {/* Protected Staff Routes */}
@@ -242,6 +244,7 @@ const AppContent = () => {
             <Route path="/staff/orders/:id/receipt" element={<ReceiptPage />} />
             <Route path="/staff/kitchen" element={<KitchenDashboard />} />
             <Route path="/kitchen" element={<KitchenDashboard />} />
+            <Route path="/profile" element={<Profile />} />
           </Route>
 
           {/* Fallback Route */}

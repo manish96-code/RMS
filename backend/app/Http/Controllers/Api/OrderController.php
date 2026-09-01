@@ -175,8 +175,12 @@ class OrderController extends Controller
             ];
         }
 
-        // Step 3: Calculate order totals (5% GST tax)
-        $tax = round($runningSubtotal * 0.05, 2);
+        // Step 3: Calculate order totals based on Restaurant Tax Settings
+        $restaurant = Restaurant::find($restaurantId);
+        $taxEnabled = $restaurant ? ($restaurant->tax_enabled ?? true) : true;
+        $taxPercentage = $restaurant ? (float) ($restaurant->tax_percentage ?? 5.00) : 5.00;
+
+        $tax = $taxEnabled ? round($runningSubtotal * ($taxPercentage / 100), 2) : 0.00;
         $discount = 0.0;
         $total = $runningSubtotal + $tax - $discount;
 

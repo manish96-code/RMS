@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\ReportController;
 use App\Http\Controllers\Api\RestaurantController;
+use App\Http\Controllers\Api\SettingsController;
 use App\Http\Controllers\Api\StaffController;
 use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\TableController;
@@ -43,6 +44,7 @@ Route::get('/dishes/{id}', [DishController::class, 'show']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user', [AuthController::class, 'user']);
+    Route::get('/profile', [ProfileController::class, 'show']);
     Route::put('/profile', [ProfileController::class, 'updateProfile']);
     Route::put('/change-password', [ProfileController::class, 'changePassword']);
 
@@ -83,6 +85,10 @@ Route::middleware('auth:sanctum')->group(function () {
         // Dashboard & Sales Reports APIs (Module 8)
         Route::get('/dashboard', [DashboardController::class, 'index']);
         Route::get('/reports/sales', [ReportController::class, 'sales']);
+
+        // Settings APIs (Module 9)
+        Route::get('/settings', [SettingsController::class, 'index']);
+        Route::put('/settings', [SettingsController::class, 'update']);
 
         // Table Management APIs (Module 4)
         Route::post('/tables', [TableController::class, 'store']);
